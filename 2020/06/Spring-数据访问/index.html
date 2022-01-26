@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>SpringBoot 数据访问 | Virgil Chen 的技术博客</title>
+  <meta name="description" content="对于数据访问来说，SpringBoot 默认采用整合Spring Data的方式进行处理，使用大量自动配置来简化数据访问层的操作。Spring Data 提供了多种数据库的访问模块（redis, elasticsearch…). 首先我们从传统的JDBC开始  JDBC  安装 MySql 首先安装 MySql，打开命令行执行 12sudo apt install mysql-serversudo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot 数据访问">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="对于数据访问来说，SpringBoot 默认采用整合Spring Data的方式进行处理，使用大量自动配置来简化数据访问层的操作。Spring Data 提供了多种数据库的访问模块（redis, elasticsearch…). 首先我们从传统的JDBC开始  JDBC  安装 MySql 首先安装 MySql，打开命令行执行 12sudo apt install mysql-serversudo">
+<meta property="og:locale">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-16-21-29.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-52-47.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-57-19.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-58-43.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-13-48-08.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-12-19.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-13-51.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-14-15.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-15-04-17.png">
+<meta property="article:published_time" content="2020-06-14T06:55:10.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://virgilchen97.github.io/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-16-21-29.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+  <aside class="sidebar sidebar-toc collapse   in  " id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jdbc"><span class="toc-number">1.</span> <span class="toc-text"> JDBC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-mysql"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 安装 MySql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.0.2.</span> <span class="toc-text"> 创建项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">1.0.3.</span> <span class="toc-text"> 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">1.0.4.</span> <span class="toc-text"> 获取数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mybatis"><span class="toc-number">2.</span> <span class="toc-text"> MyBatis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.0.1.</span> <span class="toc-text"> 创建项目，修改配置文件，创建数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BD%93%E7%B1%BB"><span class="toc-number">2.0.2.</span> <span class="toc-text"> 创建实体类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-mapper"><span class="toc-number">2.0.3.</span> <span class="toc-text"> 创建 mapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99-controller"><span class="toc-number">2.0.4.</span> <span class="toc-text"> 编写 Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C"><span class="toc-number">2.0.5.</span> <span class="toc-text"> 数据操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D"><span class="toc-number">2.0.6.</span> <span class="toc-text"> 命名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#spring-data-jpa"><span class="toc-number">3.</span> <span class="toc-text"> Spring Data JPA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93-2"><span class="toc-number">3.0.1.</span> <span class="toc-text"> 创建项目，修改配置文件，创建数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E5%AE%9E%E4%BD%93%E7%B1%BB%E5%B9%B6%E5%92%8C%E6%95%B0%E6%8D%AE%E8%A1%A8%E8%BF%9B%E8%A1%8C%E6%98%A0%E5%B0%84"><span class="toc-number">3.0.2.</span> <span class="toc-text"> 编写实体类并和数据表进行映射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99daorepository"><span class="toc-number">3.0.3.</span> <span class="toc-text"> 编写DAO（Repository）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99controller"><span class="toc-number">3.0.4.</span> <span class="toc-text"> 编写Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-number">3.0.5.</span> <span class="toc-text"> 测试</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Spring-数据访问" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot 数据访问
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/" class="article-date">
+	  <time datetime="2020-06-14T06:55:10.000Z" itemprop="datePublished">2020-06-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring/" rel="tag">Spring</a>, <a class="article-tag-link-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>对于数据访问来说，SpringBoot 默认采用整合Spring Data的方式进行处理，使用大量自动配置来简化数据访问层的操作。Spring Data 提供了多种数据库的访问模块（redis, elasticsearch…). 首先我们从传统的JDBC开始</p>
+<h1 id="jdbc"><a class="markdownIt-Anchor" href="#jdbc"></a> JDBC</h1>
+<h3 id="安装-mysql"><a class="markdownIt-Anchor" href="#安装-mysql"></a> 安装 MySql</h3>
+<p>首先安装 MySql，打开命令行执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install mysql-server</span><br><span class="line">sudo mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>然后按照流程配置。</p>
+<p>使用你喜欢的数据库软件创建一个新的数据库，我使用的是 DataGrip，创建一个新的数据库 jdbc：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database jdbc;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="创建项目"><a class="markdownIt-Anchor" href="#创建项目"></a> 创建项目</h3>
+<p>使用Spring Initializer创建新的项目，勾选Web模块，JDBC API 以及 MySql Driver。创建完成项目后，我们发现我们的pom.xml中自动包含了以下依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h3>
+<p>配置好了数据库，我们就可以编写配置文件，在 application.yml 中添加：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span> <span class="comment">#用户名</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">1A2S3D4F</span> <span class="comment">#密码</span></span><br><span class="line">    <span class="comment"># 在URL中设置Timezone和编码</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/jdbc?serverTimezone=UTC&amp;characterEncoding=UTF-8</span></span><br><span class="line">    <span class="comment"># driver-class-name: com.mysql.jdbc.Driver 不需要我们配置数据库驱动，会自动引入</span></span><br></pre></td></tr></table></figure>
+<p>接下来我们编写一个测试方法查看是否成功连接数据库：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DataJdbcApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    DataSource dataSource; <span class="comment">// 注入数据源</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 看看Datasource是那个类</span></span><br><span class="line">        System.out.println(dataSource.getClass());</span><br><span class="line">        <span class="comment">// 尝试获取一个Connection</span></span><br><span class="line">        <span class="keyword">try</span> (Connection connection = dataSource.getConnection()) &#123;</span><br><span class="line">            System.out.println(connection);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class com.zaxxer.hikari.HikariDataSource</span><br><span class="line">HikariProxyConnection@1383675856 wrapping com.mysql.cj.jdbc.ConnectionImpl@36d582cb</span><br></pre></td></tr></table></figure>
+<p>可以看到我们成功获取了一个数据库连接。值得注意的是，SpringBoot的自动配置支持在应用启动时自动创建schema，我们只需要将 schema.sql 放在类路径下，SpringBoot 启动时便会自动执行。如果不想使用默认名称或者有多个sql文件需要在项目启动时执行，那么我们可以在配置文件中添加：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">schema:</span> <span class="string">classpath:&#123;sqlFileName&#125;</span></span><br><span class="line">    <span class="attr">initialization-mode:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取数据"><a class="markdownIt-Anchor" href="#获取数据"></a> 获取数据</h3>
+<p>首先我们在数据库中创建一个新的 <code>department</code> 表，并插入一些数据：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> department</span><br><span class="line">(</span><br><span class="line">    id              <span class="type">int</span> auto_increment</span><br><span class="line">        <span class="keyword">primary</span> key,</span><br><span class="line">    department_name <span class="type">varchar</span>(<span class="number">40</span>) <span class="keyword">null</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> jdbc.department (id, department_name) <span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">&#x27;AAA&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> jdbc.department (id, department_name) <span class="keyword">VALUES</span> (<span class="number">2</span>, <span class="string">&#x27;BBB&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> jdbc.department (id, department_name) <span class="keyword">VALUES</span> (<span class="number">3</span>, <span class="string">&#x27;CCC&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>接下来我们编写一个新的Controller用于访问，并从数据库获取数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DepartmentController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span> <span class="comment">// 注入 JdbcTemplate</span></span><br><span class="line">    JdbcTemplate db;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/allDepartment&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;Map&lt;Integer, String&gt;&gt; getAllDepartment()&#123;</span><br><span class="line">        List departments = db.queryForList(<span class="string">&quot;SELECT * FROM department&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> departments;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>访问 <code>localhost:8080/allDepartment</code>：</p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-16-21-29.png" alt="" /></p>
+<h1 id="mybatis"><a class="markdownIt-Anchor" href="#mybatis"></a> MyBatis</h1>
+<h3 id="创建项目修改配置文件创建数据库"><a class="markdownIt-Anchor" href="#创建项目修改配置文件创建数据库"></a> 创建项目，修改配置文件，创建数据库</h3>
+<p>使用Spring Initializer创建新的项目，勾选Web模块，MyBatis 以及 MySql Driver。相比于 JDBC，Spring Initializer为我们添加了MyBatis的依赖。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>创建 application.yml, 添加数据库相关配置：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span> <span class="comment">#用户名</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">1A2S3D4F</span> <span class="comment">#密码</span></span><br><span class="line">    <span class="comment"># 在URL中设置Timezone和编码</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/ssm?serverTimezone=UTC&amp;characterEncoding=UTF-8</span></span><br><span class="line">    <span class="attr">schema:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">classpath:sql/department.sql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">classpath:sql/employee.sql</span></span><br><span class="line">    <span class="attr">initialization-mode:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+<p>创建新数据库用于测试：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database ssm</span><br></pre></td></tr></table></figure>
+<p>在 <code>resource/sql</code> 下创建department.sql 和 employee.sql</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> FOREIGN_KEY_CHECKS<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `department`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `department` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `departmentName` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">1</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> FOREIGN_KEY_CHECKS<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `employee`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `employee` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `lastName` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `email` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `gender` <span class="type">int</span>(<span class="number">2</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `d_id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">1</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+<p>启动项目，发现数据库中增加了 department 和 employee 表</p>
+<h3 id="创建实体类"><a class="markdownIt-Anchor" href="#创建实体类"></a> 创建实体类</h3>
+<p>我们现在有两张数据表，接下来我们根据这两张表创建对应的实体类。在 <code>entity</code> 包下创建 Employee 和 Department 类，根据数据库中对应表的类型创建，加上getter，setter方法。代码不贴在这里了。</p>
+<h3 id="创建-mapper"><a class="markdownIt-Anchor" href="#创建-mapper"></a> 创建 mapper</h3>
+<p>接下来我们为 Department 类创建 Mapper：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span> <span class="comment">// 标注此类为Mapper类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DepartmentMapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Select(&quot;select * from department where id=#&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function">Department <span class="title">getDepartmentById</span><span class="params">(Integer Id)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Delete(&quot;delete from department where id=#&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">deleteDepartmentById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Insert(&quot;insert into department(departmentName) values(#&#123;departmentName&#125;)&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">insertDepartment</span><span class="params">(Department department)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Update(&quot;update department set departmentName=#&#123;departmentName&#125; where id=#&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">updateDepartment</span><span class="params">(Department department)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果有很多Mapper，那么可以在MyBatis的配置类开头或是主Application开头添加 <code>@MapperScan(value=&quot;mapper包的路径&quot;)</code>，让Spring自动扫描 mapper 包下的 mapper，而无需在每个mapper开头加上 <code>@Mapper</code> 注解。</p>
+<h3 id="编写-controller"><a class="markdownIt-Anchor" href="#编写-controller"></a> 编写 Controller</h3>
+<p>编写一个Controller来测试我们编写的Mapper：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DepartmentController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    DepartmentMapper departmentMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/department/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Department <span class="title">getDepartment</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Integer id)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> departmentMapper.getDepartmentById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/department&quot;)</span> <span class="comment">// 实际情况应该用post, 这里使用get方便浏览器测试</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Department <span class="title">addDepartment</span><span class="params">(Department department)</span></span>&#123;</span><br><span class="line">        departmentMapper.insertDepartment(department);</span><br><span class="line">        <span class="keyword">return</span> department;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="数据操作"><a class="markdownIt-Anchor" href="#数据操作"></a> 数据操作</h3>
+<p>在浏览器访问 <code>http://localhost:8080/department?departmentName=AAA</code>，因为 departmentId在数据库自增，并且我们的Mappper也只传递 departmentName，因此请求参数只需要departmentName就可以了。</p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-52-47.png" alt="" /></p>
+<p>可以发现返回了我们插入的department，此时我们查看数据库，发现数据被成功插入了：</p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-57-19.png" alt="" /></p>
+<p>接着我们尝试查询一条数据，在浏览器访问 <code>http://localhost:8080/department/2</code></p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-16-17-58-43.png" alt="" /></p>
+<p>成功返回了我们要查询的值。</p>
+<h3 id="命名"><a class="markdownIt-Anchor" href="#命名"></a> 命名</h3>
+<p>在这里我们数据库中的字段名称叫做 <code>departmentName</code> 但是通常在数据库中我们的命名会是 <code>department_name</code>，而通常在Java Bean中我们会在属性上使用驼峰命名（<code>departmentName</code>），这样的话会导致MyBatis无法进行绑定。我们可以通过编写MyBatis配置文件的方法来启用下划线命名转驼峰命名，同样的我们以可以通过配置类来实现，在 config 包下新建 <code>MyBatisConfig</code> 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBatisConfig</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ConfigurationCustomizer <span class="title">configurationCustomizer</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">            MyBatis的配置通过向容器中添加实现 ConfigurationCustomizer 接口的对象来执行</span></span><br><span class="line"><span class="comment">            其他的配置也是通过这种办法</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConfigurationCustomizer() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">customize</span><span class="params">(org.apache.ibatis.session.Configuration configuration)</span> </span>&#123;</span><br><span class="line">                configuration.setMapUnderscoreToCamelCase(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="spring-data-jpa"><a class="markdownIt-Anchor" href="#spring-data-jpa"></a> Spring Data JPA</h1>
+<h3 id="创建项目修改配置文件创建数据库-2"><a class="markdownIt-Anchor" href="#创建项目修改配置文件创建数据库-2"></a> 创建项目，修改配置文件，创建数据库</h3>
+<p>在创建项目时勾选Spring Data JPA, 配置文件如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">1A2S3D4F</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/jpa?serverTimezone=UTC&amp;characterEncoding=UTF-8</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">generate-ddl:</span> <span class="literal">true</span> <span class="comment"># 项目启动时自动创建表</span></span><br></pre></td></tr></table></figure>
+<h3 id="编写实体类并和数据表进行映射"><a class="markdownIt-Anchor" href="#编写实体类并和数据表进行映射"></a> 编写实体类并和数据表进行映射</h3>
+<p>在 entity 包下创建 Employee 类，可以从之前的项目中复制过来，不同的是由于这次我们使用的是JPA，因此我们需要加上JPA规范中的相应注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="comment">// @Table(name=&quot;Employee&quot;) 制定表名，不标注使用小写类名</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span> <span class="comment">// 主键</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span> <span class="comment">// 自增</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// @Column(name=&quot;last_name&quot; length=50) // 指定列名，不标注默认属性名，自动转下划线</span></span><br><span class="line">    <span class="keyword">private</span> String lastName;</span><br><span class="line">    <span class="keyword">private</span> Integer gender;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="keyword">private</span> Integer dId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时运行项目，会发现 Spring Data已经自动为我们创建好了数据表，并且属性名自动转换为了下划线名称：</p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-13-48-08.png" alt="" /></p>
+<h3 id="编写daorepository"><a class="markdownIt-Anchor" href="#编写daorepository"></a> 编写DAO（Repository）</h3>
+<p>在 repository 包下创建 <code>EmployeeRepository</code> 接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EmployeeRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">Employee</span>, <span class="title">Integer</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>我们只需要编写这样一个接口而无需实现任何方法，我们继承的接口 <code>JpaRepository&lt;T, ID&gt;</code> 前面的泛型代表了这个Repository操作的数据对象的类型，我们现在是EmployeeRepository，操作的自然是Employee对象。后面的ID则指的是数据对象的主键的类型，在我们这里Employee的主键是Integer。因此我们在这里选择 <code>extends JpaRepository&lt;Employee, Integer&gt;</code>。当我们使用 <code>@Autowired</code> 注入我们自定义的Repository时，IOC容器会根据我们的接口，构造一个JpaRepositoryFactoryBean对象，再从此对象获取一个JpaRepositoryFactory对象，用于创建我们定义的接口的bean实例。</p>
+<h3 id="编写controller"><a class="markdownIt-Anchor" href="#编写controller"></a> 编写Controller</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    EmployeeRepository employeeRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/employee/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Employee <span class="title">getEmployee</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Integer id)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> employeeRepository.findById(id).get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/employee&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Employee <span class="title">insertEmployee</span><span class="params">(Employee employee)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> employeeRepository.save(employee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a class="markdownIt-Anchor" href="#测试"></a> 测试</h3>
+<p>访问 <code>http://localhost:8080/employee?lastName=Frank&amp;gender=0&amp;email=aaa&amp;dId=1</code></p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-12-19.png" alt="" /></p>
+<p>可以看到返回了我们插入的值，并且添加了自增主键，我们再尝试插入一个新员工：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/employee?lastName=Bob&amp;gender=1&amp;email=bbb&amp;dId=1</span><br></pre></td></tr></table></figure>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-13-51.png" alt="" /></p>
+<p>此时查看数据库：</p>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-14-14-15.png" alt="" /></p>
+<p>可以看到所有的值都成功插入了数据库，尝试查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/employee/1</span><br></pre></td></tr></table></figure>
+<p><img src="/img/(2020-06-16)Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE.md/2020-06-17-15-04-17.png" alt="" /></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/" title="SpringBoot 数据访问" target="_blank" rel="external">https://virgilchen97.github.io/2020/06/Spring-数据访问/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91/" title="SpringBoot Web 开发（一）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/06/SpringBoot-%E6%97%A5%E5%BF%97/" title="SpringBoot 日志"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn " data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">    <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/06/Spring-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/';
+        
+        this.page.identifier = 'Spring-数据访问';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

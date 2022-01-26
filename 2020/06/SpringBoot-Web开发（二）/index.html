@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>SpringBoot-Web开发（二） | Virgil Chen 的技术博客</title>
+  <meta name="description" content="第二部分我们来实现员工的CRUD：  REST API 为系统设计一下 RESTful API：    功能 URI 请求方式     查询所有员工 &#x2F;employees GET   查询一个员工 &#x2F;empoyee&#x2F;{id} GET   添加员工 &#x2F;employee POST   修改员工 &#x2F;employee PUT   删除员工 &#x2F;employee&#x2F;{id} DELETE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot-Web开发（二）">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="第二部分我们来实现员工的CRUD：  REST API 为系统设计一下 RESTful API：    功能 URI 请求方式     查询所有员工 &#x2F;employees GET   查询一个员工 &#x2F;empoyee&#x2F;{id} GET   添加员工 &#x2F;employee POST   修改员工 &#x2F;employee PUT   删除员工 &#x2F;employee&#x2F;{id} DELETE">
+<meta property="og:locale">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-15-02-50.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-20-44-50.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-20-56-06.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-14-34-21.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-14-43-00.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-19-02-21.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-19-03-25.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-23-20-33-02.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-23-20-34-28.png">
+<meta property="article:published_time" content="2020-06-18T15:31:51.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://virgilchen97.github.io/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-15-02-50.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+  <aside class="sidebar sidebar-toc collapse   in  " id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rest-api"><span class="toc-number">1.</span> <span class="toc-text"> REST API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#themyleaf-%E5%85%AC%E5%85%B1%E5%85%83%E7%B4%A0%E6%8F%90%E5%8F%96"><span class="toc-number">1.1.</span> <span class="toc-text"> Themyleaf 公共元素提取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A1%AB%E5%85%85%E5%91%98%E5%B7%A5%E6%95%B0%E6%8D%AE"><span class="toc-number">1.2.</span> <span class="toc-text"> 填充员工数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%98%E5%B7%A5%E6%B7%BB%E5%8A%A0"><span class="toc-number">1.3.</span> <span class="toc-text"> 员工添加</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%98%E5%B7%A5%E4%BF%AE%E6%94%B9"><span class="toc-number">1.4.</span> <span class="toc-text"> 员工修改</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%98%E5%B7%A5%E5%88%A0%E9%99%A4"><span class="toc-number">1.5.</span> <span class="toc-text"> 员工删除</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-SpringBoot-Web开发（二）" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot-Web开发（二）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+	  <time datetime="2020-06-18T15:31:51.000Z" itemprop="datePublished">2020-06-18</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring/" rel="tag">Spring</a>, <a class="article-tag-link-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>第二部分我们来实现员工的CRUD：</p>
+<h1 id="rest-api"><a class="markdownIt-Anchor" href="#rest-api"></a> REST API</h1>
+<p>为系统设计一下 RESTful API：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>URI</th>
+<th>请求方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查询所有员工</td>
+<td>/employees</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>查询一个员工</td>
+<td>/empoyee/{id}</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>添加员工</td>
+<td>/employee</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>修改员工</td>
+<td>/employee</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>删除员工</td>
+<td>/employee/{id}</td>
+<td>DELETE</td>
+</tr>
+</tbody>
+</table>
+<span id="more"></span>
+<p>来到 dashboard 页面，我们希望在点击 customer 这个链接时跳转到员工列表，并可以对员工进行增删查改</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-15-02-50.png" alt="" /></p>
+<p>修改 dashboard.html, 修改customer按钮的链接以及文本，注意要使用模板引擎：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;nav-link&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;/employee&#125;&quot;</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    Employees</span><br><span class="line"><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="themyleaf-公共元素提取"><a class="markdownIt-Anchor" href="#themyleaf-公共元素提取"></a> Themyleaf 公共元素提取</h2>
+<p>同时我们注意到员工页面和dashboard页面其实侧边栏和顶栏使用的都是相同的元素，通过观察我们发现在dashboard页面，侧边栏的所有DOM在:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">class</span>=<span class="string">&quot;col-md-2 d-none d-md-block bg-light sidebar&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个标签下，因此我们我们可以通过thymeleaf提取这个公共组件，再插入到dashboard页面中去，这样我们就不需要在list页面把侧边栏和顶栏的html都复制一遍了，我们可以通过添加 <code>id</code> 或是通过添加 <code>th:fragment</code> 这两个属性来标注一个公共元素：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">class</span>=<span class="string">&quot;col-md-2 d-none d-md-block bg-light sidebar&quot;</span> <span class="attr">id</span>=<span class="string">&quot;sidebar&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--or--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">class</span>=<span class="string">&quot;col-md-2 d-none d-md-block bg-light sidebar&quot;</span> <span class="attr">th:fragment</span>=<span class="string">&quot;sidebar&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样我们就可以去 list.html，讲list.html文件中重复的侧边栏DOM替换为：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">th:replace</span>=<span class="string">&quot;dashboard :: #sidebar&quot;</span>&gt;</span> <span class="comment">&lt;!--使用css选择器--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">th:replace</span>=<span class="string">&quot;dashboard :: sidebar&quot;</span>&gt;</span> <span class="comment">&lt;!--使用fragment标注--&gt;</span></span><br></pre></td></tr></table></figure>
+<p>完成后，为了测试效果，我们编写一个简单的 <code>EmployeeController</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GetMapping(&quot;/employee&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">list</span><span class="params">(Model model)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;list&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-20-44-50.png" alt="" /></p>
+<p>试着访问list页面，发现侧边栏依然可以正常显示。因此我们可以吧这些通用的HTML组件提取出来。在 templates 下新建 commons 文件夹，创建 bar.html，把我们之前标注的sidebar部分的HTML剪切过来。同时我们对于顶栏也可以做相同的操作：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-20-20-56-06.png" alt="" /></p>
+<p>然后在dashboard和list页面使用 <code>th:replace</code> 来注入top bar和side bar：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">th:replace</span>=<span class="string">&quot;commons/bar :: sidebar&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但是仍然有一个问题，就是即使我们现在处于Employee页面，侧边栏高亮的仍然是 Dashboard。这里我们需要用到themyleaf的参数化片段。观察高亮的按钮，我们发现其实是标签的class多了一个 <code>active</code>:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;nav-link active&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;/main&#125;&quot;</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    Dashboard </span><br><span class="line"><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们可以在此处添加一个判断，通过判断 <code>activeUri</code> 来决定是否要在class中加入 <code>active</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;nav-link active&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">th:class</span>=<span class="string">&quot;$&#123;activeUri == &#x27;main&#x27; ? &#x27;nav-link active&#x27; : &#x27;nav-link&#x27;&#125;&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;/main&#125;&quot;</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    Dashboard </span><br><span class="line"><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;nav-link active&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">th:class</span>=<span class="string">&quot;$&#123;activeUri == &#x27;employee&#x27; ? &#x27;nav-link active&#x27; : &#x27;nav-link&#x27;&#125;&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;/employee&#125;&quot;</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    Employee</span><br><span class="line"><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那么这个 <code>activeUri</code> 的变量从哪里来呢？这是我们就要修改dashboard和list这两个页面中引用这段HTML的地方，传入 <code>activeUri</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--dashboard--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">th:replace</span>=<span class="string">&quot;commons/bar :: sidebar(activeUri=&#x27;main&#x27;)&quot;</span>/&gt;</span></span><br><span class="line"><span class="comment">&lt;!--dashboard--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">th:replace</span>=<span class="string">&quot;commons/bar :: sidebar(activeUri=&#x27;employee&#x27;)&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>此时侧边栏就可以根据页面切换高亮了。</p>
+<h2 id="填充员工数据"><a class="markdownIt-Anchor" href="#填充员工数据"></a> 填充员工数据</h2>
+<p>接下来我们为员工创建实体类和相对应的Repository，不记得如何编写的可以参考之前数据访问的笔记。在数据库中插入一些假数据。然后编写 EmployeeController：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    EmployeeRepository employeeRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/employee&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">list</span><span class="params">(Model model)</span></span>&#123;</span><br><span class="line">        List&lt;Employee&gt; employees= employeeRepository.findAll();</span><br><span class="line">        model.addAttribute(<span class="string">&quot;employees&quot;</span>, employees);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;list&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来修改 list 页面的表格部分，使用模板引擎进行替换：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;table-responsive&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">&quot;table table-striped table-sm&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">thead</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>#<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>LastName<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>Email<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>Gender<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>Department Id<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">th</span>&gt;</span>Birth<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">thead</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">tbody</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">tr</span> <span class="attr">th:each</span>=<span class="string">&quot;employee:$&#123;employees&#125;&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.id&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.lastName&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.email&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.gender&#125; == 0 ? &#x27;Male&#x27; : &#x27;Female&#x27;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.departmentId&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;#dates.format(employee.birth, &#x27;dd/MM/yyyy&#x27;)&#125;&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">tbody</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>现在访问员工管理页面，发现所有员工的数据已经正常展示出来了：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-14-34-21.png" alt="" /></p>
+<h2 id="员工添加"><a class="markdownIt-Anchor" href="#员工添加"></a> 员工添加</h2>
+<p>现在已经可以列出所有员工，现在我们添加增加员工的功能。首先在list界面添加相关的按钮以及他们对应的操作地址，添加员工页面的地址我们定为 <code>GET /addEmployee</code> :</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">main</span> <span class="attr">role</span>=<span class="string">&quot;main&quot;</span> <span class="attr">class</span>=<span class="string">&quot;col-md-9 ml-sm-auto col-lg-10 pt-3 px-4&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 添加按钮 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-sm btn-primary&quot;</span> <span class="attr">href</span>=<span class="string">&quot;/addEmployee&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;/addEmployee&#125;&quot;</span>&gt;</span>Add<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">main</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>界面大概会变成这样：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-14-43-00.png" alt="" /></p>
+<p>然后在 EmployeeController 中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回添加员工页面</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/addEmployee&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toAddPage</span><span class="params">(Model model)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 添加员工页面需要选择部门，因此把所有部门查找出来放入model</span></span><br><span class="line">    List&lt;Department&gt; departments = departmentRepository.findAll();</span><br><span class="line">    model.addAttribute(<span class="string">&quot;departments&quot;</span>, departments);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;add&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping(&quot;/employee&quot;)</span></span><br><span class="line"><span class="comment">// Spring 会自动把收到的参数parse到Employee对象中</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">addEmployee</span><span class="params">(Employee employee)</span></span>&#123;</span><br><span class="line">    employeeRepository.save(employee);</span><br><span class="line">    <span class="comment">// 重定向到员工列表</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;redirect:/employee&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们需要增加一个添加员工的模板，把 list.html 复制一份，删除main标签内的所有内容，编写一个和 Employee 类对应的表单，注意所有 <code>&lt;input&gt;</code> 标签一定要有 <code>name</code> 属性，该属性的值为 Employee 对象内对应的属性名：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">th:action</span>=<span class="string">&quot;@&#123;/employee&#125;&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;lastname&quot;</span>&gt;</span>Last Name<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--Employee对象中属性名为lastName，因此name就是lastName--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&quot;lastName&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;lastname&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;Bob&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;email&quot;</span>&gt;</span>Email<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">type</span>=<span class="string">&quot;email&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;email&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;name@example.com&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;gender&quot;</span>&gt;</span>Gender<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;gender&quot;</span> &gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-check form-check-inline&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">&quot;form-check-input&quot;</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;gender&quot;</span> <span class="attr">id</span>=<span class="string">&quot;inlineRadio1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;form-check-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;inlineRadio1&quot;</span>&gt;</span>Male<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-check form-check-inline&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">&quot;form-check-input&quot;</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;gender&quot;</span> <span class="attr">id</span>=<span class="string">&quot;inlineRadio2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;form-check-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;inlineRadio2&quot;</span>&gt;</span>Female<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;department&quot;</span>&gt;</span>Department<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">select</span> <span class="attr">multiple</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;department&quot;</span> <span class="attr">name</span>=<span class="string">&quot;departmentId&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--取出model中的Department，循环创建对应option--&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--提交到数据库中的为DepartmentId，因此value=&quot;$&#123;department.id&#125;&quot;--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">th:each</span>=<span class="string">&quot;department:$&#123;departments&#125;&quot;</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;department.departmentName&#125;&quot;</span> <span class="attr">th:value</span>=<span class="string">&quot;$&#123;department.id&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;birth&quot;</span>&gt;</span>Birth<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;birth&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;birth&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;2000-01-01&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span>&gt;</span>Submit<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>完成后，点击添加按钮，我们可以来到添加员工的页面：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-19-02-21.png" alt="" /></p>
+<p>填入相关信息（注意日期格式为 yyyy/MM/dd），点击 Submit 按钮，我们自动跳转到了员工列表页面，并且新的员工也出现在了列表中：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-22-19-03-25.png" alt="" /></p>
+<h2 id="员工修改"><a class="markdownIt-Anchor" href="#员工修改"></a> 员工修改</h2>
+<p>我们可以在重用添加员工页面，不同的是如果是员工修改，那么表单中应该显示该员工原本的数据。首先为员工修改编写 controller:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转到员工修改页面</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/employee/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toEditPage</span><span class="params">(<span class="meta">@PathVariable</span> Integer id, Model model)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 查找出员工和所有的部门</span></span><br><span class="line">    Employee employee = employeeRepository.findById(id).get();</span><br><span class="line">    model.addAttribute(<span class="string">&quot;employee&quot;</span>, employee);</span><br><span class="line">    List&lt;Department&gt; departments = departmentRepository.findAll();</span><br><span class="line">    model.addAttribute(<span class="string">&quot;departments&quot;</span>, departments);</span><br><span class="line">    <span class="comment">// 重用 Add 页面</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;add&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PutMapping(&quot;/employee/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">editEmployee</span><span class="params">(<span class="meta">@PathVariable</span> Integer id, Employee employee, Model model)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 因为是修改，我们需要把Path中的id添加到员工对象中</span></span><br><span class="line">    employee.setId(id);</span><br><span class="line">    employeeRepository.save(employee);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;redirect:/employee&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后则是要对 add 页面进行修改，让他兼容员工修改的功能：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 判断页面中是否有employee这个key，从而实现不同的请求路径 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">th:action</span>=<span class="string">&quot;$&#123;employee != null&#125; ? @&#123;/employee/&#125; + $&#123;employee.id&#125; : @&#123;/employee&#125;&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- HTML 表单不支持PUT请求，Spring通过添加下方的标签来实现解析PUT请求 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;_method&quot;</span> <span class="attr">value</span>=<span class="string">&quot;put&quot;</span> <span class="attr">th:if</span>=<span class="string">&quot;$&#123;employee!=null&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;lastname&quot;</span>&gt;</span>Last Name<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 设置value为employee的值，所有操作都要事先判断是否为空 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&quot;lastName&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;lastname&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;Bob&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">th:value</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;employee.lastName&#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;email&quot;</span>&gt;</span>Email<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">type</span>=<span class="string">&quot;email&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;email&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;name@example.com&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">th:value</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;employee.email&#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;gender&quot;</span>&gt;</span>Gender<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;gender&quot;</span> &gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-check form-check-inline&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">&quot;form-check-input&quot;</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;gender&quot;</span> <span class="attr">id</span>=<span class="string">&quot;inlineRadio1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">th:checked</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;employee.gender == 0&#125;&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;form-check-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;inlineRadio1&quot;</span>&gt;</span>Male<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-check form-check-inline&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">&quot;form-check-input&quot;</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;gender&quot;</span> <span class="attr">id</span>=<span class="string">&quot;inlineRadio2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">th:checked</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;employee.gender == 1&#125;&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;form-check-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;inlineRadio2&quot;</span>&gt;</span>Female<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;department&quot;</span>&gt;</span>Department<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">select</span> <span class="attr">multiple</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;department&quot;</span> <span class="attr">name</span>=<span class="string">&quot;departmentId&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">th:each</span>=<span class="string">&quot;department:$&#123;departments&#125;&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">th:text</span>=<span class="string">&quot;$&#123;department.departmentName&#125;&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">th:value</span>=<span class="string">&quot;$&#123;department.id&#125;&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">th:selected</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;employee.departmentId == department.id&#125;&quot;</span></span></span><br><span class="line"><span class="tag">            &gt;</span><span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;birth&quot;</span>&gt;</span>Birth<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;birth&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> <span class="attr">id</span>=<span class="string">&quot;birth&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;2000/01/01&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">th:value</span>=<span class="string">&quot;$&#123;employee!=null&#125; ? $&#123;#dates.format(employee.birth, &#x27;yyyy/MM/dd&#x27;)&#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span>&gt;</span>Submit<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接下来我们要修改Spring Boot的配置文件，启用从 hidden 的input标签解析请求方式的功能：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">mvc:</span></span><br><span class="line">    <span class="attr">hiddenmethod:</span></span><br><span class="line">      <span class="attr">filter:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>大功告成，现在点击员工旁的edit按钮，可以看到来到了add页面，而且输入框中预先填写了员工的当前数据：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-23-20-33-02.png" alt="" /></p>
+<p>修改这个员工的邮箱为 <code>frank@test.com.cn</code> 点击提交，可以看到回到了员工列表页面，并且员工的信息已经显示为修改后的值：</p>
+<p><img src="/img/(2020-06-14)SpringBoot-Web%E5%BC%80%E5%8F%91.md/2020-06-23-20-34-28.png" alt="" /></p>
+<h2 id="员工删除"><a class="markdownIt-Anchor" href="#员工删除"></a> 员工删除</h2>
+<p>第一步仍然是编写 Controller：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DeleteMapping(&quot;/employee/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">deleteEmployee</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span></span>&#123;</span><br><span class="line">    employeeRepository.deleteById(id);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;redirect:/employee&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后修改页面的删除按钮，为了避免一个按钮一个表单的臃肿，我们将表单和按钮分开，给按钮添加监听并用JavaScript来提交表单，首先修改删除按钮：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 使用th:attr添加了一个员工id的参数，用于区分是哪个按钮被点击了，同时在class中添加del-btn --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-sm btn-danger del-btn&quot;</span> <span class="attr">th:attr</span>=<span class="string">&quot;employee-id=$&#123;employee.id&#125;&quot;</span>&gt;</span>Delete<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后在 <code>&lt;main&gt;</code> 标签外添加一个 form：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">id</span>=<span class="string">&quot;del-form&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;_method&quot;</span> <span class="attr">value</span>=<span class="string">&quot;delete&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后在 <code>&lt;body&gt;</code> 标签下添加脚本：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 旧版本写法</span></span></span><br><span class="line"><span class="javascript">    $(<span class="string">&quot;.del-btn&quot;</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">        $(<span class="string">&quot;#del-form&quot;</span>).attr(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;/employee/&quot;</span> + $(<span class="built_in">this</span>).attr(<span class="string">&quot;employee-id&quot;</span>)).submit();</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript">    <span class="comment">// ES6 写法</span></span></span><br><span class="line"><span class="javascript">    $(<span class="string">&quot;.del-btn&quot;</span>).click(<span class="function">(<span class="params">event</span>)=&gt;</span>&#123;</span></span><br><span class="line"><span class="javascript">        $(<span class="string">&quot;#del-form&quot;</span>).attr(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;/employee/&quot;</span> + $(event.target).attr(<span class="string">&quot;employee-id&quot;</span>)).submit();</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>完成后重新启动项目，点击删除按钮，可以发现员工成功的被删除了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/" title="SpringBoot-Web开发（二）" target="_blank" rel="external">https://virgilchen97.github.io/2020/06/SpringBoot-Web开发（二）/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%B8%89%EF%BC%89/" title="SpringBoot-Web开发（三）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91/" title="SpringBoot Web 开发（一）"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn " data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">    <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/06/SpringBoot-Web%E5%BC%80%E5%8F%91%EF%BC%88%E4%BA%8C%EF%BC%89/';
+        
+        this.page.identifier = 'SpringBoot-Web开发（二）';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

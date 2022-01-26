@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Chapter 4 Foundations of Shared Memory | Virgil Chen 的技术博客</title>
+  <meta name="description" content="The space of registers 寄存器空间  定义 一个支持读写的寄存器的定义，如果实现的是 Register&lt;boolean&gt;，那么就叫做 布尔寄存器（Boolean Register）， 如果是 Register&lt;Integer&gt; ，那么就是 多值寄存器（M-valued Register） 12345&#x2F;&#x2F; Register的接口定义public int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 4 Foundations of Shared Memory">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/04/Chapter-4-Foundations-of-Shared-Memory/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="The space of registers 寄存器空间  定义 一个支持读写的寄存器的定义，如果实现的是 Register&lt;boolean&gt;，那么就叫做 布尔寄存器（Boolean Register）， 如果是 Register&lt;Integer&gt; ，那么就是 多值寄存器（M-valued Register） 12345&#x2F;&#x2F; Register的接口定义public int">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-04-29T08:31:02.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Multi-core Concurrent Programming">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/04/Chapter-4-Foundations-of-Shared-Memory/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Chapter-4-Foundations-of-Shared-Memory" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Chapter 4 Foundations of Shared Memory
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/04/Chapter-4-Foundations-of-Shared-Memory/" class="article-date">
+	  <time datetime="2020-04-29T08:31:02.000Z" itemprop="datePublished">2020-04-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Multi-core-Concurrent-Programming/" rel="tag">Multi-core Concurrent Programming</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/04/Chapter-4-Foundations-of-Shared-Memory/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="the-space-of-registers-寄存器空间"><a class="markdownIt-Anchor" href="#the-space-of-registers-寄存器空间"></a> The space of registers 寄存器空间</h1>
+<h2 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h2>
+<p>一个支持读写的寄存器的定义，如果实现的是 <code>Register&lt;boolean&gt;</code>，那么就叫做 <strong>布尔寄存器（Boolean Register）</strong>， 如果是 <code>Register&lt;Integer&gt;</code> ，那么就是 <strong>多值寄存器（M-valued Register）</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Register的接口定义</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">read</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">write</span><span class="params">(T val)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="寄存器的安全性-safe-regular-atomic"><a class="markdownIt-Anchor" href="#寄存器的安全性-safe-regular-atomic"></a> 寄存器的安全性 Safe / Regular / Atomic</h2>
+<p><strong>Safe</strong></p>
+<ul>
+<li>如果 <code>read()</code> 和 <code>write()</code> 不重叠，那么 <code>read()</code> 应当返回最近一次 <code>write()</code> 写入的值。</li>
+<li>如果 <code>read()</code> 和 <code>write()</code> 重叠，那么 <code>read()</code> 可以返回寄存器范围内的任意值。</li>
+</ul>
+<p><strong>Regular</strong></p>
+<ul>
+<li>如果 <code>read()</code> 和 <code>write()</code> 不重叠，那么 <code>read()</code> 应当返回最近一次 <code>write()</code> 写入的值。</li>
+<li>如果 <code>read()</code> 和 <code>write()</code> 重叠， 假设 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>v</mi><mn>0</mn></msub><mo>−</mo><msub><mi>v</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">v_0 - v_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是曾经被写入这个寄存器的值。那么 <code>read()</code> 应当返回这些值的其中之一。</li>
+</ul>
+<p><strong>Atomic</strong></p>
+<ul>
+<li>在regular的基础上，先发生的 <code>read()</code> 不能读取到比后发生的 <code>read()</code> 更新的值</li>
+</ul>
+<h2 id="单线程寄存器"><a class="markdownIt-Anchor" href="#单线程寄存器"></a> 单线程寄存器</h2>
+<p>在单线程环境下可以正常运行的寄存器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SequentialRegister</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> T value;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">read</span><span class="params">()</span></span>&#123; </span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(T v)</span></span>&#123;</span><br><span class="line">        value = v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mrsw-safe-register"><a class="markdownIt-Anchor" href="#mrsw-safe-register"></a> MRSW Safe Register</h2>
+<p>基本思路就是为每一个线程创建一个SRSW的寄存器，每一个线程都去自己对应的SRSW寄存器读取，写入则通过循环写入所有的SRSW寄存器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeBooleanMRSWRegister</span> <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">Boolean</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span>[] s_table; <span class="comment">// array of safe SRSW registers</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SafeBooleanMRSWRegister</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        s_table = <span class="keyword">new</span> <span class="keyword">boolean</span>[capacity];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Boolean <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s_table[ThreadID.get()];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(Boolean x)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s_table.length; i++)&#123;</span><br><span class="line">            s_table[i] = x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mrsw-regular-register"><a class="markdownIt-Anchor" href="#mrsw-regular-register"></a> MRSW Regular Register</h2>
+<p>对于Boolean值来说，我们分为两种情况：</p>
+<ol>
+<li>新写入的值和旧值不同，这种情况下safe和regular的行为相同，都可以返回0或者1</li>
+<li>新写入的值和旧值相同，此时regular只能返回旧值，而safe可以返回0或者1</li>
+</ol>
+<p>因此我们只需要做的是在写入一个新值时，只有和原来的值不同才进行写入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeBooleanMRSWRegister</span> <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">Boolean</span>&gt; </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Boolean&gt; last;</span><br><span class="line">    <span class="keyword">boolean</span> s_value; <span class="comment">// safe MRSW register</span></span><br><span class="line">    RegBooleanMRSWRegister(<span class="keyword">int</span> capacity) &#123; </span><br><span class="line">        last = <span class="keyword">new</span> ThreadLocal&lt;Boolean&gt;() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">protected</span> Boolean <span class="title">initialValue</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="keyword">false</span>; &#125;; </span><br><span class="line">        &#125;; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(Boolean x)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(x != last.get())&#123;</span><br><span class="line">            last.set(x);</span><br><span class="line">            s_value = x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Boolean <span class="title">read</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s_value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="m-valued-mrsw-regular-register"><a class="markdownIt-Anchor" href="#m-valued-mrsw-regular-register"></a> M-valued MRSW Regular Register</h2>
+<p>使用unary annotation来表示多值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RegMRSWRegister</span> <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">Byte</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> RANGE = Byte.MAX_VALUE - Byte.MIN_VALUE + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">boolean</span>[] r_bit = <span class="keyword">new</span> <span class="keyword">boolean</span>[RANGE]; <span class="comment">// regular boolean MRSW</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RegMRSWRegister</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; r_bit.length; i++)&#123;</span><br><span class="line">            r_bit[i] = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        r_bit[<span class="number">0</span>] = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(Byte x)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 设置第x位,然后将左边的覆盖为0</span></span><br><span class="line">        r_bit[x] = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = x - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--)&#123;</span><br><span class="line">            r_bit[i] = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 从左数直到第一个1</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; RANGE; i++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (r_bit[i]) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="srsw-atomic-register"><a class="markdownIt-Anchor" href="#srsw-atomic-register"></a> SRSW Atomic Register</h2>
+<p>我们给通过给每次写入添加timestamp来解决，每次 <code>read()</code> 都记录read到值的timestamp，如果有线程read到了值小于timestamp，那么便直到自己读取到了旧值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicSRSWRegister</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Long&gt; lastStamp;</span><br><span class="line">    ThreadLocal&lt;StampedValue&lt;T&gt;&gt; lastRead;</span><br><span class="line">    StampedValue&lt;T&gt; r_value;  <span class="comment">// stored in regular SRSW register</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AtomicSRSWRegister</span><span class="params">(T init)</span> </span>&#123;</span><br><span class="line">        r_value = <span class="keyword">new</span> StampedValue&lt;T&gt;(init);</span><br><span class="line">        lastStamp = <span class="keyword">new</span> ThreadLocal&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">protected</span> Long <span class="title">initialValue</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="number">0</span>; &#125;;</span><br><span class="line">        &#125;;</span><br><span class="line">        lastRead = <span class="keyword">new</span> ThreadLocal&lt;StampedValue&lt;T&gt;&gt;()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">protected</span> StampedValue&lt;T&gt; <span class="title">initialValue</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> r_value; &#125;;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">read</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 读取当前值</span></span><br><span class="line">        StampedValue&lt;T&gt; value = r_value;</span><br><span class="line">        <span class="comment">// 读取最后一次读取读取的值</span></span><br><span class="line">        StampedValue&lt;T&gt; last = lastRead.get();</span><br><span class="line">        <span class="comment">// 比较二者的timestamp，return较新的那一个</span></span><br><span class="line">        StampedValue&lt;T&gt; result = StampedValue.max(value, last);</span><br><span class="line">        lastRead.set(result);</span><br><span class="line">        <span class="keyword">return</span> result.value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(T val)</span></span>&#123;</span><br><span class="line">        <span class="keyword">long</span> stamp = lastStamp.get()+<span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mrsw-atomic-register"><a class="markdownIt-Anchor" href="#mrsw-atomic-register"></a> MRSW Atomic Register</h2>
+<p>在我们搭建 SRSW Atomic Register 的时候，我们是通过一个 <code>lastStamp</code> 和 <code>lastRead</code> 变量，让读取到最新值的Reader去帮助其他reader获取最新的值。而在MRSW版本中我们延续了这个思想。让先读取到的Reader帮助其他Reader获取最新的值。具体解释在代码中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicMRSWRegister</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Long&gt; lastStamp; <span class="comment">// 最新时间戳</span></span><br><span class="line">    <span class="keyword">private</span> StampedValue&lt;T&gt;[][] a_table; <span class="comment">// 每一个值都存在 SRSW atomic 寄存器中</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AtomicMRSWRegister</span><span class="params">(T init, <span class="keyword">int</span> readers)</span> </span>&#123;</span><br><span class="line">        lastStamp = <span class="keyword">new</span> ThreadLocal&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">protected</span> Long <span class="title">initialValue</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="number">0</span>; &#125;;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用一个 reader * reader 大小的数组</span></span><br><span class="line">        a_table = (StampedValue&lt;T&gt;[][]) <span class="keyword">new</span> StampedValue[readers][readers];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 初始化</span></span><br><span class="line">        StampedValue&lt;T&gt; value = <span class="keyword">new</span> StampedValue&lt;T&gt;(init);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; readers; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; readers; j++) &#123;</span><br><span class="line">                a_table[i][j] = value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(T v)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> stamp = lastStamp.get() + <span class="number">1</span>; <span class="comment">// 时间戳++</span></span><br><span class="line">        lastStamp.set(stamp); <span class="comment">// 设置最新时间戳</span></span><br><span class="line">        StampedValue&lt;T&gt; value = <span class="keyword">new</span> StampedValue&lt;T&gt;(stamp, v);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a_table.length; i++) &#123;</span><br><span class="line">            a_table[i][i] = value; <span class="comment">// 将对角线上的寄存器依次写入新值</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">read</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> me = ThreadID.get();</span><br><span class="line">        StampedValue&lt;T&gt; value = a_table[me][me]; <span class="comment">// 首先读取自己对应位置的StampedValue</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 纵向寻求其他Reader的帮助，看他们是否有获取到更新的值</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a_table.length; i++) &#123;</span><br><span class="line">            value = StampedValue.max(value, a_table[i][me]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 横向覆盖最新值帮助其他Reader，其他Reader纵向扫描就可以扫描到</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a_table.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i == me) <span class="keyword">continue</span>;</span><br><span class="line">            a_table[me][i] = value;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> value</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/04/Chapter-4-Foundations-of-Shared-Memory/" title="Chapter 4 Foundations of Shared Memory" target="_blank" rel="external">https://virgilchen97.github.io/2020/04/Chapter-4-Foundations-of-Shared-Memory/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/06/SpringBoot-%E5%85%A5%E9%97%A8/" title="SpringBoot 入门"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/04/Chapter-3-Concurrent-Objects/" title="Chapter 3 Concurrent Objects"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/04/Chapter-4-Foundations-of-Shared-Memory/';
+        
+        this.page.identifier = 'Chapter-4-Foundations-of-Shared-Memory';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

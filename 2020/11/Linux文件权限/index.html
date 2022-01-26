@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Linux文件权限 | Virgil Chen 的技术博客</title>
+  <meta name="description" content="Linux 安全性 Linux安全系统的核心是用户账户，用户权限是通过创建用户时分配的用户ID（UID）来跟踪的。  &#x2F;etc&#x2F;passwd 文件 Linux系统使用一个专门的文件来将用户的登录名匹配到对应的UID值。这个文件就是 &#x2F;etc&#x2F;passwd 文件，下面是一个这个文件的例子： 12345678910111213141516$ cat &#x2F;etc&#x2F;passwdroot:x:0:0:roo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件权限">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="Linux 安全性 Linux安全系统的核心是用户账户，用户权限是通过创建用户时分配的用户ID（UID）来跟踪的。  &#x2F;etc&#x2F;passwd 文件 Linux系统使用一个专门的文件来将用户的登录名匹配到对应的UID值。这个文件就是 &#x2F;etc&#x2F;passwd 文件，下面是一个这个文件的例子： 12345678910111213141516$ cat &#x2F;etc&#x2F;passwdroot:x:0:0:roo">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-11-08T05:31:58.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Shell">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+  <aside class="sidebar sidebar-toc collapse   in  " id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux-%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text"> Linux 安全性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#etcpasswd-%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text"> &#x2F;etc&#x2F;passwd 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#etcshadow-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text"> &#x2F;etc&#x2F;shadow 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="toc-number">1.3.</span> <span class="toc-text"> 添加用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="toc-number">1.4.</span> <span class="toc-text"> 删除用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7"><span class="toc-number">1.5.</span> <span class="toc-text"> 修改用户</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#usermod"><span class="toc-number">1.5.1.</span> <span class="toc-text"> usermod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#passwd-%E5%92%8C-chpasswd"><span class="toc-number">1.5.2.</span> <span class="toc-text"> passwd 和 chpasswd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#chsh-chage"><span class="toc-number">1.5.3.</span> <span class="toc-text"> chsh, chage</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%BB%84"><span class="toc-number">2.</span> <span class="toc-text"> 用户组</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#etcgroup-%E6%96%87%E4%BB%B6"><span class="toc-number">2.1.</span> <span class="toc-text"> &#x2F;etc&#x2F;group 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%BF%AE%E6%94%B9%E7%BB%84"><span class="toc-number">2.2.</span> <span class="toc-text"> 创建修改组</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-number">3.</span> <span class="toc-text"> 文件权限</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E7%AC%A6"><span class="toc-number">3.1.</span> <span class="toc-text"> 文件权限符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-number">3.2.</span> <span class="toc-text"> 默认文件权限</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%B9%E5%8F%98%E5%AE%89%E5%85%A8%E6%80%A7%E8%AE%BE%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text"> 改变安全性设置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E6%9D%83%E9%99%90"><span class="toc-number">4.1.</span> <span class="toc-text"> 更改权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E6%89%80%E5%B1%9E%E5%85%B3%E7%B3%BB"><span class="toc-number">4.2.</span> <span class="toc-text"> 更改所属关系</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text"> 共享文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7idsuid"><span class="toc-number">5.1.</span> <span class="toc-text"> 设置用户ID（SUID）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BB%84idsgid"><span class="toc-number">5.2.</span> <span class="toc-text"> 设置组ID（SGID）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%98%E7%9D%80%E4%BD%8D"><span class="toc-number">5.3.</span> <span class="toc-text"> 粘着位</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux文件权限" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux文件权限
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" class="article-date">
+	  <time datetime="2020-11-08T05:31:58.000Z" itemprop="datePublished">2020-11-08</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Shell/" rel="tag">Shell</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="linux-安全性"><a class="markdownIt-Anchor" href="#linux-安全性"></a> Linux 安全性</h1>
+<p>Linux安全系统的核心是用户账户，用户权限是通过创建用户时分配的用户ID（UID）来跟踪的。</p>
+<h2 id="etcpasswd-文件"><a class="markdownIt-Anchor" href="#etcpasswd-文件"></a> <code>/etc/passwd</code> 文件</h2>
+<p>Linux系统使用一个专门的文件来将用户的登录名匹配到对应的UID值。这个文件就是 <code>/etc/passwd</code> 文件，下面是一个这个文件的例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/passwd</span></span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">bin:x:2:2:bin:/bin:/usr/sbin/nologin</span><br><span class="line">sys:x:3:3:sys:/dev:/usr/sbin/nologin</span><br><span class="line">sync:x:4:65534:sync:/bin:/bin/sync</span><br><span class="line">games:x:5:60:games:/usr/games:/usr/sbin/nologin</span><br><span class="line">man:x:6:12:man:/var/cache/man:/usr/sbin/nologin</span><br><span class="line">lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin   </span><br><span class="line">mail:x:8:8:mail:/var/mail:/usr/sbin/nologin    </span><br><span class="line">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin</span><br><span class="line">uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin</span><br><span class="line">proxy:x:13:13:proxy:/bin:/usr/sbin/nologin</span><br><span class="line">www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin</span><br><span class="line">backup:x:34:34:backup:/var/backups:/usr/sbin/nologin</span><br><span class="line">[...]</span><br></pre></td></tr></table></figure>
+<p>其中，<code>root</code> 用户是系统的管理员，UID固定为0。同时Linux也会为各种各样的功能创建不同的账户，这些账户是系统账户，被各种服务进程用来访问资源，所有运行在后台的服务都需要用一个系统用户账户登录到Linux系统上。如果不考虑安全，这些服务都可以使用root账户登录。但是，如果有非授权的用户攻陷了这些服务中的一个，他立刻就能作为root用户进入系统。为了防止发生这种情况，现在运行在Linux服务器后台的几乎所有的服务都是用自己的账户登录。这样的话，即使有人攻入了某个服务，也无法访问整个系统。Linux 为系统账户预留了500以下的UID。</p>
+<p>在 <code>passwd</code> 文件中有如下的字段，用冒号分隔：</p>
+<ul>
+<li>用户名</li>
+<li>密码</li>
+<li>UID</li>
+<li>GID（组ID）</li>
+<li>备注</li>
+<li>Home目录位置</li>
+<li>默认shell</li>
+</ul>
+<p>值得注意的是所有用户的密码字段都是一个 <code>x</code>，因为密码并不直接保存在 <code>passwd</code> 文件中，而是保存在 <code>/etc/shadow</code> 文件中。</p>
+<h2 id="etcshadow-文件"><a class="markdownIt-Anchor" href="#etcshadow-文件"></a> <code>/etc/shadow</code> 文件</h2>
+<p><code>/etc/shadow</code> 文件对Linux系统密码管理提供了更多的控制。只有root用户才能访问/etc/shadow文件，<code>/etc/shadow</code>文件为系统上的每个用户账户都保存了一条记录。如果使用普通用户查看此文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/shadow</span></span><br><span class="line">cat: /etc/shadow: Permission denied</span><br></pre></td></tr></table></figure>
+<p>使用root用户就可以看到文件内容，下面是一个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virgil:$6$mI1pRsd/$8.4RVzKnC3O3BU2FcXmtcLC7UQa.4z6q2tYXk/u7WlFAmmHIQDmVqI7HCeiDUBL6F0ynpSIY1Z0.:18236:0:99999:7:::</span><br></pre></td></tr></table></figure>
+<p>一共有9个字段，同样也是用冒号分隔：</p>
+<ul>
+<li>/etc/passwd文件中的登录名字段对应的登录名</li>
+<li>加密后的密码</li>
+<li>自上次修改密码后过去的天数</li>
+<li>多少天后才能更改密码</li>
+<li>多少天后必须更改密码</li>
+<li>密码过期前提前多少天提醒用户更改密码</li>
+<li>密码过期后多少天禁用用户账户</li>
+<li>用户账户被禁用的日期</li>
+<li>预留字段给将来使用</li>
+</ul>
+<h2 id="添加用户"><a class="markdownIt-Anchor" href="#添加用户"></a> 添加用户</h2>
+<p>可以使用 <code>useradd</code> 命令添加一个新用户，通过 <code>-D</code> 参数，我们可以看到其默认值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ useradd -D</span><br><span class="line">GROUP=100 (默认添加到GID 100的公共组)</span><br><span class="line">HOME=/home (home目录位于/home/loginname)</span><br><span class="line">INACTIVE=-1 (密码过期不会被禁用)</span><br><span class="line">EXPIRE=</span><br><span class="line">SHELL=/bin/sh </span><br><span class="line">SKEL=/etc/skel (将内容复制到HOME目录下)</span><br><span class="line">CREATE_MAIL_SPOOL=no</span><br></pre></td></tr></table></figure>
+<p>默认情况下，Ubuntu中的 <code>/etc/skel</code> 中有如下文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al /etc/skel/</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x   2 root root 4096 Dec  6  2019 .</span><br><span class="line">drwxr-xr-x 106 root root 4096 Nov  8 13:17 ..</span><br><span class="line">-rw-r--r--   1 root root  220 Apr  4  2018 .bash_logout</span><br><span class="line">-rw-r--r--   1 root root 3771 Apr  4  2018 .bashrc</span><br><span class="line">-rw-r--r--   1 root root  807 Apr  4  2018 .profile</span><br></pre></td></tr></table></figure>
+<p>如果我们现在创建一个新的用户 <code>test</code>, 默认情况下 <code>useradd</code> 不会创建用户的home目录，我们可以指定 <code>-m</code> 参数来创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo useradd -m test</span><br><span class="line">$ ls /home</span><br><span class="line">test  virgil</span><br><span class="line">$ ls /home/test/</span><br><span class="line">$ ls -al /home/test/</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 2 test test 4096 Nov  8 15:10 .</span><br><span class="line">drwxr-xr-x 4 root root 4096 Nov  8 15:10 ..</span><br><span class="line">-rw-r--r-- 1 test test  220 Apr  4  2018 .bash_logout</span><br><span class="line">-rw-r--r-- 1 test test 3771 Apr  4  2018 .bashrc</span><br><span class="line">-rw-r--r-- 1 test test  807 Apr  4  2018 .profile</span><br></pre></td></tr></table></figure>
+<p>可以看到用户被创建，该用户的HOME目录中也有了一份 <code>/etc/skel</code> 中文件的拷贝。注意创建用户需要使用管理员账户。</p>
+<h2 id="删除用户"><a class="markdownIt-Anchor" href="#删除用户"></a> 删除用户</h2>
+<p><code>userdel</code> 可以用来删除用户，默认情况下只会删除 passwd 中的用户信息，如果加上 <code>-r</code> 参数，则会删除HOME目录以及邮件目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo userdel -r <span class="built_in">test</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls /home/</span></span><br><span class="line">virgil</span><br></pre></td></tr></table></figure>
+<h2 id="修改用户"><a class="markdownIt-Anchor" href="#修改用户"></a> 修改用户</h2>
+<h3 id="usermod"><a class="markdownIt-Anchor" href="#usermod"></a> <code>usermod</code></h3>
+<p>是所有修改工具最强大一个，可以修改 passwd 文件中的大部分字段：</p>
+<ul>
+<li><code>-l</code> 修改用户账户的登录名。</li>
+<li><code>-L</code> 锁定账户，使用户无法登录。</li>
+<li><code>-p</code> 修改账户的密码。</li>
+<li><code>-U</code> 解除锁定，使用户能够登录。</li>
+</ul>
+<h3 id="passwd-和-chpasswd"><a class="markdownIt-Anchor" href="#passwd-和-chpasswd"></a> <code>passwd</code> 和 <code>chpasswd</code></h3>
+<p>可以用于修改密码，任何用户都可以使用 <code>passwd</code> 修改自己的密码，只有管理员才能修改其他人的密码。当要同时修改大量用户的密码时，<code>chpasswd</code> 命令支持标准输入自动读取登录名和密码对（由冒号分割）列表。</p>
+<h3 id="chsh-chage"><a class="markdownIt-Anchor" href="#chsh-chage"></a> <code>chsh</code>, <code>chage</code></h3>
+<p><code>chsh</code> 可以用于更改用户的默认shell，必须填写shell可执行文件的完整路径名。<code>chage</code> 可用于修改用户账户的有效期，可以修改 <code>shadow</code> 文件的后几个和账户密码过期时间有关的参数。</p>
+<h1 id="用户组"><a class="markdownIt-Anchor" href="#用户组"></a> 用户组</h1>
+<p>用户账户在控制单个用户安全性方面很好用，但涉及在共享资源的一组用户时就比较麻烦了。为了解决这个问题，Linux系统采用了另外一个安全概念——组（group）。组权限允许多个用户对系统中的对象（比如文件、目录或设备等）共享一组共用的权限。同样的每个组都有一个唯一的GID。</p>
+<h2 id="etcgroup-文件"><a class="markdownIt-Anchor" href="#etcgroup-文件"></a> <code>/etc/group</code> 文件</h2>
+<p><code>etc/group</code> 文件包含系统上用到的每个组的信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/group</span></span><br><span class="line">root:x:0:</span><br><span class="line">daemon:x:1:</span><br><span class="line">bin:x:2:</span><br><span class="line">sys:x:3:</span><br><span class="line">adm:x:4:syslog,virgil</span><br><span class="line">tty:x:5:</span><br></pre></td></tr></table></figure>
+<p>每个字段分别代表：</p>
+<ul>
+<li>组名</li>
+<li>组密码</li>
+<li>GID</li>
+<li>属于该组的用户列表
+<ul>
+<li>
+<blockquote>
+<p>在列表中，有些组并没有列出用户。 这并不是说这些组没有成员。当一个用户在/etc/passwd文件中指定某个组作为默认组时， 那么这个用户的账户不会作为该组成员再出现在/etc/group文件中</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<p>切记不要直接修改 group 文件来将用户添加到一个组，要使用 <code>usermod</code> 命令。</p>
+<h2 id="创建修改组"><a class="markdownIt-Anchor" href="#创建修改组"></a> 创建修改组</h2>
+<p><code>groupadd</code> 命令可在系统上创建新组，新的组默认没有用户，可以使用 <code>usermod</code> 命令将用户加入新的组，<code>-G</code> 参数表示把这个新组添加到该用户的组列表里，使用 <code>-g</code> 则会覆盖用户原有的组。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo groupadd shared</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> tail -1 /etc/group</span></span><br><span class="line">shared:x:1001:</span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo usermod -G shared virgil</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> tail -1 /etc/group</span></span><br><span class="line">shared:x:1001:virgil</span><br></pre></td></tr></table></figure>
+<p><code>groupmod</code> 命令可以修改已有组的 GID（加 <code>-g</code> 选项）或组名（加 <code>-n</code> 选项）。</p>
+<h1 id="文件权限"><a class="markdownIt-Anchor" href="#文件权限"></a> 文件权限</h1>
+<h2 id="文件权限符"><a class="markdownIt-Anchor" href="#文件权限符"></a> 文件权限符</h2>
+<p>当使用 <code>ls -l</code> 命令时我们会有如下输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ls -l</span></span><br><span class="line">total 62080</span><br><span class="line">drwxr-xr-x   3 virgil virgil     4096 May 13 22:11 c</span><br><span class="line">drwxr-xr-x   3 virgil virgil     4096 Oct 18 18:48 cf-project</span><br><span class="line">-rw-r--r--   1 virgil virgil 63476994 Jul 23 11:08 cide.deb</span><br></pre></td></tr></table></figure>
+<p>输出结果的第一个字段就是描述文件和目录权限的编码：</p>
+<ul>
+<li>第一个字段表示了对象的类型：
+<ul>
+<li><code>-</code> 代表文件</li>
+<li><code>d</code> 代表目录</li>
+<li><code>l</code> 代表链接</li>
+<li><code>c</code> 代表字符型设备</li>
+<li><code>b</code> 代表块设备</li>
+<li><code>n</code> 代表网络设备</li>
+</ul>
+</li>
+<li>之后有3组三字符的编码。这三组分别代表：
+<ul>
+<li>对象的属主的权限</li>
+<li>对象的属组的权限</li>
+<li>其他用户的权限</li>
+</ul>
+</li>
+<li>每一组中的每个字符分别代表
+<ul>
+<li><code>r</code> 代表可读</li>
+<li><code>w</code> 代表可写</li>
+<li><code>x</code> 代表可执行</li>
+<li>如果对应位置是 <code>-</code>，那么代表没有此权限</li>
+</ul>
+</li>
+</ul>
+<h2 id="默认文件权限"><a class="markdownIt-Anchor" href="#默认文件权限"></a> 默认文件权限</h2>
+<p><code>umask</code> 命令用来创建文件和目录的默认权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rm new file</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> touch newfile</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -al newfile</span> </span><br><span class="line">-rw-r--r-- 1 virgil virgil 0 Nov  8 17:23 newfile</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">umask</span></span></span><br><span class="line">0022</span><br></pre></td></tr></table></figure>
+<p><code>umask</code> 的第一位代表黏着位，这个我们后面再说。后面三位代表的则是文件权限的&quot;遮罩&quot;,首先我们了解一下我们是如何使用八进制表示文件权限的。</p>
+<p>对于一个文件的一组 <code>rwx</code> 属性，我们一共有8种可能（2^3)，例如 <code>-wx -&gt; 011 -&gt; 3</code>。对于默认的 <code>umask</code> <code>0022</code> 这个值来说，第一位是黏着位我们不看，对于后三位：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">666 -&gt; 110 110 110 -&gt; rw-rw-rw- 全部权限</span><br><span class="line">       --- --- --- 减去</span><br><span class="line">022 -&gt; 000 010 010 -&gt; 遮罩</span><br><span class="line">       === === ===</span><br><span class="line">644 -&gt; 110 100 100 -&gt; rw-r--r-- 默认权限</span><br></pre></td></tr></table></figure>
+<h1 id="改变安全性设置"><a class="markdownIt-Anchor" href="#改变安全性设置"></a> 改变安全性设置</h1>
+<h2 id="更改权限"><a class="markdownIt-Anchor" href="#更改权限"></a> 更改权限</h2>
+<p><code>chmod</code> 命令用来改变文件和目录的安全性设置。默认格式是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod [OPTION]... MODE[,MODE]... FILE...</span><br><span class="line">chmod [OPTION]... OCTAL-MODE FILE...</span><br></pre></td></tr></table></figure>
+<p>其中， octal-mode 代表的是三位的八进制代码，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l test.txt</span><br><span class="line">-rw-r--r-- 1 virgil virgil 48 Nov  4 20:46 test.txt</span><br><span class="line">$ chmod 666 test.txt</span><br><span class="line">$ ls -l test.txt </span><br><span class="line">-rw-rw-rw- 1 virgil virgil 48 Nov  4 20:46 test.txt</span><br></pre></td></tr></table></figure>
+<p>另外你也可以使用符号模式来进行快速的操作，这样就不需要去记住八进制代码了，在符号模式中：</p>
+<ul>
+<li>u 代表所属用户</li>
+<li>g 代表所属组</li>
+<li>o 代表其他用户</li>
+<li>a 代表全部</li>
+</ul>
+<p>在想要操作的权限作用对象后，更上 <code>+|-|=</code> 来代表要增加，移除或者赋值。后面再更上 <code>r|w|x</code> 代表想要赋予，删除，复制的权限。例如如果想要去掉组对于文件的修改权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l test.txt</span><br><span class="line">-rw-rw-rw- 1 virgil virgil 48 Nov  4 20:46 test.txt</span><br><span class="line">$ chmod g-w test.txt</span><br><span class="line">$ ls -l test.txt</span><br><span class="line">-rw-r--rw- 1 virgil virgil 48 Nov  4 20:46 test.txt</span><br></pre></td></tr></table></figure>
+<h2 id="更改所属关系"><a class="markdownIt-Anchor" href="#更改所属关系"></a> 更改所属关系</h2>
+<p><code>chown</code> 和 <code>chgrp</code> 命令可以用于更改文件的属组和属主。例如我们创建一个只有所属者可读可写的文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l test.txt </span><br><span class="line">-rw------- 1 virgil virgil 48 Nov  4 20:46 test.txt</span><br></pre></td></tr></table></figure>
+<p>然后使用 <code>sudo</code> 将其所属者更改为 <code>root</code>，再尝试查看文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chown root test.txt </span><br><span class="line">$ cat test.txt </span><br><span class="line">cat: test.txt: Permission denied</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>只有root用户能够改变文件的属主。任何属主都可以改变文件的属组，但前提是属主必须 是原属组和目标属组的成员。</p>
+</blockquote>
+<h1 id="共享文件"><a class="markdownIt-Anchor" href="#共享文件"></a> 共享文件</h1>
+<p>创建新文件时，Linux会用你默认的UID和GID给文件分配权限， 如果想要在大范围内共享文件，那么每次都使用 <code>chmod</code> 或者 <code>chgrp</code> 就会很麻烦， 为了解决此问题，Linux还为每个文件和目录存储了3个额外的信息位。</p>
+<h2 id="设置用户idsuid"><a class="markdownIt-Anchor" href="#设置用户idsuid"></a> 设置用户ID（SUID）</h2>
+<p>当文件被用户使用时，程序会以文件属主的权限运行。SUID 一般只对二进制文件有效，当执行该二进制文件时，执行者会在程序执行过程中短暂获取文件所有者的权限。例如 <code>passwd</code> 命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ls -l /usr/bin/passwd</span></span><br><span class="line">-rwsr-xr-x 1 root root 59640 Mar 22  2019 /usr/bin/passwd</span><br></pre></td></tr></table></figure>
+<p>在其所有者（root）的执行权限上是 <code>s</code> 而不是 <code>x</code>，这就代表这个文件有 SUID。我们知道所有用户的密码都是储存在 <code>/etc/shadow</code> 这个文件里的，只有root用户才有修改和读取的权限。但是当我们执行 <code>passwd</code> 时，因为SUID，我们短暂获取了 <code>root</code> 用户的的权限，可以对 <code>/etc/shadow</code> 进行修改。</p>
+<h2 id="设置组idsgid"><a class="markdownIt-Anchor" href="#设置组idsgid"></a> 设置组ID（SGID）</h2>
+<p>与SUID一样，对二进制文件来说，执行过程中会短暂获得文件属组的权限。不同的是，对目录来说，目录中创建的新文件会以目录的默认属组作为默认属组。在共享文件时，通过设置共享目录的SGID，所有新创建文件的默认组都会是目录的数组，避免了手动更改属组的麻烦。</p>
+<p>现在我们创建一个 <code>shared</code> 组，并创建一个共享文件夹 <code>share</code>，将文件夹的默认组更改为 <code>shared</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir share</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chgrp shared share/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l | grep share</span></span><br><span class="line">drwxr-xr-x   2 virgil shared     4096 Nov 15 17:22 share</span><br></pre></td></tr></table></figure>
+<p>现在我们设置SGID，SGID可以通过 <code>chmod</code> 命令的八进制代码模式设置，其中：</p>
+<ul>
+<li><code>1</code> 代表黏着位</li>
+<li><code>2</code> 代表SGID</li>
+<li><code>4</code> 代表SUID</li>
+<li>多种组合只需要相加，例如同时设置SGID和SUID为 <code>6</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir share</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chgrp shared share/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l | grep share</span></span><br><span class="line">drwxr-xr-x   2 virgil shared     4096 Nov 15 17:22 share</span><br><span class="line"><span class="meta">$</span><span class="bash"> chmod 2755 share</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l | grep share</span></span><br><span class="line">drwxr-sr-x   2 virgil shared     4096 Nov 15 17:22 share</span><br></pre></td></tr></table></figure>
+<p>此时如果我们进入此目录创建一个新的文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> share/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> touch test.txt</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l</span></span><br><span class="line">total 0</span><br><span class="line">-rw-r--r-- 1 virgil shared 0 Nov 15 17:34 test.txt</span><br></pre></td></tr></table></figure>
+<p>可以看到文件的默认组就为shared，现在默认创建的文件对于属组来说还没有写入权限，和 Other 相同，我们可以通过修改 <code>umask</code> 来修改创建的文件的默认权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">umask</span> 002</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> touch test2.txt</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l</span></span><br><span class="line">total 0</span><br><span class="line">-rw-r--r-- 1 virgil shared 0 Nov 15 17:34 test.txt</span><br><span class="line">-rw-rw-r-- 1 virgil shared 0 Nov 15 17:36 test2.txt</span><br></pre></td></tr></table></figure>
+<p>这样我们就实现了文件在组内的共享。</p>
+<h2 id="粘着位"><a class="markdownIt-Anchor" href="#粘着位"></a> 粘着位</h2>
+<p>进程结束后文件还驻留（粘着）在内存中。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux文件权限" target="_blank" rel="external">https://virgilchen97.github.io/2020/11/Linux文件权限/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/08/2021-08-19-06-56-27-LoadingCache-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98/" title="LoadingCache 本地缓存"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/11/Linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" title="Linux环境变量"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn " data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">    <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/11/Linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/';
+        
+        this.page.identifier = 'Linux文件权限';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

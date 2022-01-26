@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Java面试速查 | Virgil Chen 的技术博客</title>
+  <meta name="description" content="记录一下Java面试中经常遇到的知识点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java面试速查">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="记录一下Java面试中经常遇到的知识点">
+<meta property="og:locale">
+<meta property="og:image" content="https://virgilchen97.github.io/img/btree.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/b+tree.png">
+<meta property="article:published_time" content="2020-04-01T03:33:46.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://virgilchen97.github.io/img/btree.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+  <aside class="sidebar sidebar-toc collapse   in  " id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jmm"><span class="toc-number">1.</span> <span class="toc-text"> JMM</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#java-%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.1.</span> <span class="toc-text"> Java 内存区域：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jmm-%E6%A6%82%E8%BF%B0"><span class="toc-number">1.2.</span> <span class="toc-text"> JMM 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jmm-%E7%9A%84%E6%89%BF%E8%AF%BA"><span class="toc-number">1.3.</span> <span class="toc-text"> JMM 的承诺</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%BC%82%E5%B8%B8-oom"><span class="toc-number">2.</span> <span class="toc-text"> 内存溢出异常 OOM</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#java-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text"> Java 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text"> 流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8A%A0%E8%BD%BD"><span class="toc-number">3.1.1.</span> <span class="toc-text"> 1. 加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%AA%8C%E8%AF%81"><span class="toc-number">3.1.2.</span> <span class="toc-text"> 2. 验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%87%86%E5%A4%87"><span class="toc-number">3.1.3.</span> <span class="toc-text"> 3. 准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%A7%A3%E6%9E%90"><span class="toc-number">3.1.4.</span> <span class="toc-text"> 4. 解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">3.1.5.</span> <span class="toc-text"> 5. 初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%BC%8F-java-12"><span class="toc-number">3.2.</span> <span class="toc-text"> 双亲委派模式 （java 1.2）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">3.2.1.</span> <span class="toc-text"> 优点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text"> 多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%A6%82%E8%A7%88"><span class="toc-number">4.1.</span> <span class="toc-text"> 线程概览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="toc-number">4.1.1.</span> <span class="toc-text"> 线程状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#thread-%E9%87%8D%E8%A6%81%E6%96%B9%E6%B3%95"><span class="toc-number">4.1.2.</span> <span class="toc-text"> Thread 重要方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synchronized-%E5%92%8C-lock"><span class="toc-number">4.2.</span> <span class="toc-text"> synchronized 和 lock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-number">4.3.</span> <span class="toc-text"> 线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#threadpoolexecuter"><span class="toc-number">4.3.1.</span> <span class="toc-text"> ThreadPoolExecuter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cas-compare-and-swap"><span class="toc-number">4.4.</span> <span class="toc-text"> CAS (Compare and swap)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-number">4.5.</span> <span class="toc-text"> 进程间通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%AE%A1%E9%81%93pipe"><span class="toc-number">4.5.1.</span> <span class="toc-text"> 1. 管道（Pipe）：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BF%A1%E5%8F%B7signal"><span class="toc-number">4.5.2.</span> <span class="toc-text"> 2. 信号（Signal）：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B6%88%E6%81%AFmessage%E9%98%9F%E5%88%97"><span class="toc-number">4.5.3.</span> <span class="toc-text"> 3. 消息（Message）队列：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%A5%97%E6%8E%A5%E5%AD%97socket"><span class="toc-number">4.5.4.</span> <span class="toc-text"> 3. 套接字（Socket）：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#java-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">5.</span> <span class="toc-text"> Java 垃圾回收</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#java-%E4%B8%AD%E7%9A%84%E5%BC%95%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text"> Java 中的引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%B8%BA%E5%9E%83%E5%9C%BE"><span class="toc-number">5.2.</span> <span class="toc-text"> 如何判断是否为垃圾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95%E6%9C%AA%E4%BD%BF%E7%94%A8"><span class="toc-number">5.2.1.</span> <span class="toc-text"> 1. 引用计数法（未使用）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B9%E6%90%9C%E7%B4%A2%E6%B3%95"><span class="toc-number">5.2.2.</span> <span class="toc-text"> 2. 根搜索法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B8%85%E7%90%86%E5%9E%83%E5%9C%BE"><span class="toc-number">5.3.</span> <span class="toc-text"> 如何清理垃圾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="toc-number">5.3.1.</span> <span class="toc-text"> 标记清除算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="toc-number">5.3.2.</span> <span class="toc-text"> 标记整理算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#copying-%E7%AE%97%E6%B3%95"><span class="toc-number">5.3.3.</span> <span class="toc-text"> Copying 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="toc-number">5.3.4.</span> <span class="toc-text"> 分代收集算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%9C%A8%E5%A0%86%E4%B8%AD%E7%9A%84%E5%AD%98%E5%82%A8"><span class="toc-number">5.4.</span> <span class="toc-text"> 对象在堆中的存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%B0%E7%94%9F%E4%BB%A3-young-generation"><span class="toc-number">5.4.1.</span> <span class="toc-text"> 1. 新生代 Young Generation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B9%B4%E8%80%81%E4%BB%A3old-generation"><span class="toc-number">5.4.2.</span> <span class="toc-text"> 2. 年老代（Old Generation）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%8C%81%E4%B9%85%E4%BB%A3-permanent-generation"><span class="toc-number">5.4.3.</span> <span class="toc-text"> 3. 持久代 Permanent Generation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="toc-number">5.5.</span> <span class="toc-text"> Java垃圾回收器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-serial%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.1.</span> <span class="toc-text"> 1. Serial收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-parnew%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.2.</span> <span class="toc-text"> 2. ParNew收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-parallel-scavenge%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.3.</span> <span class="toc-text"> 3. Parallel Scavenge收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#serial-old%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.4.</span> <span class="toc-text"> Serial Old收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#parallel-old-%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.5.</span> <span class="toc-text"> Parallel Old 收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cms-%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.6.</span> <span class="toc-text"> CMS 收集器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#g1-%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-number">5.5.7.</span> <span class="toc-text"> G1 收集器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#java-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">6.</span> <span class="toc-text"> Java 数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#arraylist"><span class="toc-number">6.1.</span> <span class="toc-text"> ArrayList</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linkedlist"><span class="toc-number">6.2.</span> <span class="toc-text"> LinkedList</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hashmap"><span class="toc-number">6.3.</span> <span class="toc-text"> HashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#concurrenthashmap"><span class="toc-number">6.4.</span> <span class="toc-text"> ConcurrentHashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jdk-18-%E4%B9%8B%E5%89%8D"><span class="toc-number">6.4.1.</span> <span class="toc-text"> JDK 1.8 之前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdk-18-%E5%9F%BA%E4%BA%8Ecas"><span class="toc-number">6.4.2.</span> <span class="toc-text"> JDK 1.8 基于CAS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#threadlocal"><span class="toc-number">6.5.</span> <span class="toc-text"> ThreadLocal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91b-%E6%A0%91-b%E6%A0%91"><span class="toc-number">6.6.</span> <span class="toc-text"> 红黑树，B 树， B+树</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#spring"><span class="toc-number">7.</span> <span class="toc-text"> Spring</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#servlet"><span class="toc-number">7.1.</span> <span class="toc-text"> Servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springmvc-%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B"><span class="toc-number">7.2.</span> <span class="toc-text"> SpringMVC 请求流程</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Java面试速查" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java面试速查
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/" class="article-date">
+	  <time datetime="2020-04-01T03:33:46.000Z" itemprop="datePublished">2020-04-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Java/" rel="tag">Java</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>记录一下Java面试中经常遇到的知识点</p>
+<span id="more"></span>
+<h1 id="jmm"><a class="markdownIt-Anchor" href="#jmm"></a> JMM</h1>
+<h2 id="java-内存区域"><a class="markdownIt-Anchor" href="#java-内存区域"></a> Java 内存区域：</h2>
+<ol>
+<li>所有线程共享的：
+<ul>
+<li>方法区，存放被虚拟机加载的类信息，常量，静态变量等</li>
+<li>堆，存放对象实例，GC的主要工作区域</li>
+</ul>
+</li>
+<li>线程私有的：
+<ul>
+<li>程序计数器，当前执行的字节码行号</li>
+<li>栈，局部变量，返回值，返回地址等</li>
+<li>本地方法栈，不关心</li>
+</ul>
+</li>
+</ol>
+<h2 id="jmm-概述"><a class="markdownIt-Anchor" href="#jmm-概述"></a> JMM 概述</h2>
+<p>Java内存模型中规定所有变量都存储在主内存，主内存是共享内存区域，所有线程都可以访问，但线程对变量的操作(读取赋值等)必须在工作内存中进行，首先要将变量从主内存拷贝的自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，工作内存中存储着主内存中的变量副本拷贝。</p>
+<h2 id="jmm-的承诺"><a class="markdownIt-Anchor" href="#jmm-的承诺"></a> JMM 的承诺</h2>
+<ol>
+<li>原子性</li>
+<li>指令重排 (volatile)</li>
+<li>可见性 (volatile)</li>
+<li>有序性</li>
+</ol>
+<h1 id="内存溢出异常-oom"><a class="markdownIt-Anchor" href="#内存溢出异常-oom"></a> 内存溢出异常 OOM</h1>
+<p>造成内存溢出的主要原因有：</p>
+<ol>
+<li>Java堆溢出，创建了太多的对象，可以设置Java堆的大小，但是也需要排查内存泄漏</li>
+<li>虚拟机栈或者本地方法栈溢出
+<ul>
+<li>栈深度过大：StackOverFlow</li>
+<li>扩展栈时空间不足：OOM</li>
+</ul>
+</li>
+<li>运行时常量池溢出</li>
+<li>方法区溢出，方法区用于存放Class的相关信息，如果运行时产生大量的类去填满方法区，就可能发生方法区的内存溢出。(Cglib)</li>
+<li>本地内存溢出</li>
+</ol>
+<h1 id="java-类加载器"><a class="markdownIt-Anchor" href="#java-类加载器"></a> Java 类加载器</h1>
+<h2 id="流程"><a class="markdownIt-Anchor" href="#流程"></a> 流程</h2>
+<h3 id="1-加载"><a class="markdownIt-Anchor" href="#1-加载"></a> 1. 加载</h3>
+<p>类加载过程的一个阶段：通过一个类的完全限定查找此类字节码文件，并利用字节码文件创建一个Class对象</p>
+<h3 id="2-验证"><a class="markdownIt-Anchor" href="#2-验证"></a> 2. 验证</h3>
+<p>目的在于确保Class文件的字节流中包含信息符合当前虚拟机要求，不会危害虚拟机自身安全。主要包括四种验证，文件格式验证，元数据验证，字节码验证，符号引用验证。</p>
+<h3 id="3-准备"><a class="markdownIt-Anchor" href="#3-准备"></a> 3. 准备</h3>
+<p>为类变量(即static修饰的字段变量)分配内存并且设置该类变量的初始值即0(如static int i=5;这里只将i初始化为0，至于5的值将在初始化时赋值)，这里不包含用final修饰的static，因为final在编译的时候就会分配了，注意这里不会为实例变量分配初始化，类变量会分配在方法区中，而实例变量是会随着对象一起分配到Java堆中。</p>
+<h3 id="4-解析"><a class="markdownIt-Anchor" href="#4-解析"></a> 4. 解析</h3>
+<p>主要将常量池中的符号引用替换为直接引用的过程。符号引用就是一组符号来描述目标，可以是任何字面量，而直接引用就是直接指向目标的指针、相对偏移量或一个间接定位到目标的句柄。有类或接口的解析，字段解析，类方法解析，接口方法解析</p>
+<h3 id="5-初始化"><a class="markdownIt-Anchor" href="#5-初始化"></a> 5. 初始化</h3>
+<p>类加载最后阶段，若该类具有超类，则对其进行初始化，执行静态初始化器和静态初始化成员变量</p>
+<h2 id="双亲委派模式-java-12"><a class="markdownIt-Anchor" href="#双亲委派模式-java-12"></a> 双亲委派模式 （java 1.2）</h2>
+<p>如果一个类加载器收到了类加载请求，它并不会自己先去加载，而是把这个请求委托给父类的加载器去执行，如果父类加载器还存在其父类加载器，则进一步向上委托，依次递归，请求最终将到达顶层的启动类加载器，如果父类加载器可以完成类加载任务，就成功返回，倘若父类加载器无法完成此加载任务，子加载器才会尝试自己去加载</p>
+<h3 id="优点"><a class="markdownIt-Anchor" href="#优点"></a> 优点</h3>
+<p>避免类的重复加载，父加载器加载后子类不会再加载。<br />
+安全，核心API无法被替换</p>
+<h1 id="多线程"><a class="markdownIt-Anchor" href="#多线程"></a> 多线程</h1>
+<h2 id="线程概览"><a class="markdownIt-Anchor" href="#线程概览"></a> 线程概览</h2>
+<h3 id="线程状态"><a class="markdownIt-Anchor" href="#线程状态"></a> 线程状态</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new -&gt; ready -&gt; running -&gt; exit</span><br><span class="line">         |         |</span><br><span class="line">         |         |</span><br><span class="line">         -&gt;blocked-|</span><br></pre></td></tr></table></figure>
+<h3 id="thread-重要方法"><a class="markdownIt-Anchor" href="#thread-重要方法"></a> Thread 重要方法</h3>
+<ol>
+<li>start() 开始执行</li>
+<li>stop() 强行停止（过时，不要使用）</li>
+<li>join() 等待线程结束</li>
+</ol>
+<h2 id="synchronized-和-lock"><a class="markdownIt-Anchor" href="#synchronized-和-lock"></a> synchronized 和 lock</h2>
+<ul>
+<li>Lock是一个接口，而synchronized是Java中的关键字，synchronized是内置的语言实现；</li>
+<li>synchronized在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生；而Lock在发生异常时，如果没有主动通过unLock()去释放锁，则很可能造成死锁现象，因此使用Lock时需要在finally块中释放锁；</li>
+<li>Lock可以让等待锁的线程响应中断，而synchronized却不行，使用synchronized时，等待的线程会一直等待下去，不能够响应中断；</li>
+<li>通过Lock可以知道有没有成功获取锁，而synchronized却无法办到。</li>
+<li>Lock可以提高多个线程进行读操作的效率。（可以通过readwritelock实现读写分离）</li>
+<li>性能上来说，在资源竞争不激烈的情形下，Lock性能稍微比synchronized差点（编译程序通常会尽可能的进行优化synchronized）。但是当同步非常激烈的时候，synchronized的性能一下子能下降好几十倍。而ReentrantLock确还能维持常态。</li>
+</ul>
+<h2 id="线程池"><a class="markdownIt-Anchor" href="#线程池"></a> 线程池</h2>
+<p>原因：线程过短，频繁创建线程浪费时间</p>
+<h3 id="threadpoolexecuter"><a class="markdownIt-Anchor" href="#threadpoolexecuter"></a> ThreadPoolExecuter</h3>
+<p><strong>重要参数：</strong></p>
+<p><code>corePoolSize</code> 核心池大小，可以预先创建，如果thread数量达到，则吧新任务放入缓存队列。</p>
+<p><code>maximumPoolSize</code> 线程池最大线程数</p>
+<p><code>keepAliveTime</code> 没有任务时多长时间终止</p>
+<p><code>workQueue</code> 阻塞队列，存储等待执行的任务</p>
+<p>新提交一个任务时的处理流程：</p>
+<ol>
+<li>
+<p>如果当前线程池的线程数还没有达到基本大小 <code>(poolSize &lt; corePoolSize)</code>，无论是否有空闲的线程新增一个线程处理新提交的任务；</p>
+</li>
+<li>
+<p>如果当前线程池的线程数大于或等于基本大小 <code>(poolSize &gt;= corePoolSize)</code> 且任务队列未满时，就将新提交的任务提交到阻塞队列排队，等候处理workQueue.offer(command)；</p>
+</li>
+<li>
+<p>如果当前线程池的线程数大于或等于基本大小 <code>(poolSize &gt;= corePoolSize)</code> 且任务队列满时；</p>
+<ol>
+<li>
+<p>当前 <code>poolSize&lt;maximumPoolSize</code>，那么就新增线程来处理任务；</p>
+</li>
+<li>
+<p>当前 <code>poolSize=maximumPoolSize</code>，那么意味着线程池的处理能力已经达到了极限，此时需要拒绝新增加的任务。至于如何拒绝处理新增的任务，取决于线程池的饱和策略RejectedExecutionHandler。</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>使用</strong></p>
+<p>共有4种线程池,都通过<code>ExecutorService pool = Executors. newXXXThreadExecutor();</code>来创建</p>
+<ol>
+<li>newCachedThreadPool 可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。</li>
+<li>newFixedThreadPool 定长线程池</li>
+<li>newScheduledThreadPool 支持定时任务的定长线程池</li>
+<li>newSingleThreadPool 单线程线程池</li>
+</ol>
+<h2 id="cas-compare-and-swap"><a class="markdownIt-Anchor" href="#cas-compare-and-swap"></a> CAS (Compare and swap)</h2>
+<p>CAS中有三个操作数，内存对象<code>v</code>，预计原值<code>A</code>，新值<code>B</code>。</p>
+<blockquote>
+<p>在对A进行赋值时，先判断原来的值是否为A，如果为A那么就把新值B赋值到V对象上，如果原本的值不是A，则不赋值。</p>
+</blockquote>
+<p><strong>缺点</strong></p>
+<ul>
+<li>自循环时间长，开销大，CPU敏感，如果又很多线程想要修改同一变量，会不停的自循环，浪费CPU周期</li>
+<li>只能保证一个变量的原子操作，不能保证一个代码块</li>
+<li>ABA问题
+<ul>
+<li>变量由A变为了B，但是在检查之前又变为了A</li>
+<li>可以通过添加一个版本戳来记录变化，在java中是<code>AtomicStampedReference</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>AtomicInteger</strong></p>
+<p>AtomicInteger类是一个支持原子操作的Integer类，通过CAS实现原子操作。内部使用了一个死循环，如果CAS不成功就一直重试，直到成功。</p>
+<p>AtomicInteger用法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> <span class="comment">//获取当前的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span><span class="comment">//获取当前的值，并设置新的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span><span class="comment">//获取当前的值，并自增</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">()</span> <span class="comment">//获取当前的值，并自减</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> delta)</span> <span class="comment">//获取当前的值，并加上预期的值</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="进程间通信"><a class="markdownIt-Anchor" href="#进程间通信"></a> 进程间通信</h2>
+<h3 id="1-管道pipe"><a class="markdownIt-Anchor" href="#1-管道pipe"></a> 1. <strong>管道（Pipe）</strong>：</h3>
+<p>管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系进程间的通信，允许一个进程和另一个与它有共同祖先的进程之间进行通信。</p>
+<p>Java中并不提供创建管道文件的方法，因此在linux系统中我们可以使用 <code>mkfifo</code> 命令来创建一个管道文件。然后再Java中就可以将管道文件当作一个普通文件进行输出。</p>
+<h3 id="2-信号signal"><a class="markdownIt-Anchor" href="#2-信号signal"></a> 2. <strong>信号（Signal）</strong>：</h3>
+<p>信号是比较复杂的通信方式，用于通知接受进程有某种事件发生。不常用</p>
+<h3 id="3-消息message队列"><a class="markdownIt-Anchor" href="#3-消息message队列"></a> 3. <strong>消息（Message）队列</strong>：</h3>
+<p>消息队列是消息的链接表。有足够权限的进程可以向队列中添加消息，被赋予读权限的进程则可以读走队列中的消息。消息队列克服了信号承载信息量少，管道只能承载无格式字节流以及缓冲区大小受限等缺点。</p>
+<h3 id="3-套接字socket"><a class="markdownIt-Anchor" href="#3-套接字socket"></a> 3. <strong>套接字（Socket）</strong>：</h3>
+<p>更为一般的进程间通信机制，与其他通信机制不同的是，它可用于不同及其间的进程通信。可用于不同机器之间的进程间通信。</p>
+<h1 id="java-垃圾回收"><a class="markdownIt-Anchor" href="#java-垃圾回收"></a> Java 垃圾回收</h1>
+<h2 id="java-中的引用"><a class="markdownIt-Anchor" href="#java-中的引用"></a> Java 中的引用</h2>
+<ol>
+<li>强引用 <code>Object obj = new Object()</code> 大多数引用</li>
+<li>软引用，可能还有用但是非必须，回收一次后不够会回收这些。</li>
+<li>弱引用，只能生存到下次GC之前</li>
+<li>虚引用，无法通过其获得实例，只会再被回收时收到通知。</li>
+</ol>
+<h2 id="如何判断是否为垃圾"><a class="markdownIt-Anchor" href="#如何判断是否为垃圾"></a> 如何判断是否为垃圾</h2>
+<h3 id="1-引用计数法未使用"><a class="markdownIt-Anchor" href="#1-引用计数法未使用"></a> 1. 引用计数法（未使用）</h3>
+<p>堆中每个对象（不是引用）都有一个引用计数器。当一个对象被创建并初始化赋值后，该变量计数设置为1。每当有一个地方引用它时，计数器值就加1（a = b， b被引用，则b引用的对象计数+1）。当引用失效时（一个对象的某个引用超过了生命周期（出作用域后）或者被设置为一个新值时），计数器值就减1。任何引用计数为0的对象可以被当作垃圾收集。当一个对象被垃圾收集时，它引用的任何对象计数减1。</p>
+<h3 id="2-根搜索法"><a class="markdownIt-Anchor" href="#2-根搜索法"></a> 2. 根搜索法</h3>
+<ol>
+<li>
+<p>通过一系列名为“GC Roots”的对象作为起始点，寻找对应的引用节点。</p>
+</li>
+<li>
+<p>找到这些引用节点后，从这些节点开始向下继续寻找它们的引用节点。</p>
+</li>
+<li>
+<p>重复（2）。</p>
+</li>
+<li>
+<p>搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链相连时，就证明此对象是不可用的。</p>
+</li>
+</ol>
+<h2 id="如何清理垃圾"><a class="markdownIt-Anchor" href="#如何清理垃圾"></a> 如何清理垃圾</h2>
+<h3 id="标记清除算法"><a class="markdownIt-Anchor" href="#标记清除算法"></a> 标记清除算法</h3>
+<p>标记-清除算法分为标记和清除两个阶段。该算法首先从根集合进行扫描，对存活的对象对象标记，标记完毕后，再扫描整个空间中未被标记的对象并进行回收</p>
+<ul>
+<li>效率不高</li>
+<li>产生碎片</li>
+</ul>
+<h3 id="标记整理算法"><a class="markdownIt-Anchor" href="#标记整理算法"></a> 标记整理算法</h3>
+<p>把不是垃圾的向前移动，清除边界以外的内存，缺点是GC的暂停时间会加长，因为拷贝耗时</p>
+<h3 id="copying-算法"><a class="markdownIt-Anchor" href="#copying-算法"></a> Copying 算法</h3>
+<p>把内存分为两块，每次一块的使用完了，就把还存活的复制到另一块上。</p>
+<h3 id="分代收集算法"><a class="markdownIt-Anchor" href="#分代收集算法"></a> 分代收集算法</h3>
+<p>在下面说明</p>
+<h2 id="对象在堆中的存储"><a class="markdownIt-Anchor" href="#对象在堆中的存储"></a> 对象在堆中的存储</h2>
+<p>分为三个区域</p>
+<h3 id="1-新生代-young-generation"><a class="markdownIt-Anchor" href="#1-新生代-young-generation"></a> 1. 新生代 Young Generation</h3>
+<p>几乎所有新生成的对象首先都是放在年轻代的。新生代内存按照8:1:1的比例分为一个Eden区和两个Survivor(Survivor0,Survivor1)区。大部分对象在Eden区中生成。</p>
+<p>GC过程会将Eden中的存活放置在S0</p>
+<p>S0满了把Eden和S0复制到S1,然后清空Eden和S0，S1复制到S0.</p>
+<p>没经过一次GC，对象的年龄+1，满15岁直接进老年区</p>
+<p>一般用copy算法</p>
+<h3 id="2-年老代old-generation"><a class="markdownIt-Anchor" href="#2-年老代old-generation"></a> 2. 年老代（Old Generation）</h3>
+<p>大对象直接去老年代，老年代满了会Full GC</p>
+<p>标记清除、标记整理</p>
+<h3 id="3-持久代-permanent-generation"><a class="markdownIt-Anchor" href="#3-持久代-permanent-generation"></a> 3. 持久代 Permanent Generation</h3>
+<h2 id="java垃圾回收器"><a class="markdownIt-Anchor" href="#java垃圾回收器"></a> Java垃圾回收器</h2>
+<h3 id="1-serial收集器"><a class="markdownIt-Anchor" href="#1-serial收集器"></a> 1. Serial收集器</h3>
+<p>基于复制算法的新生代收集器</p>
+<ul>
+<li>JDK 1.3之前是唯一选择</li>
+<li>进行垃圾收集时必须暂停所有工作线程</li>
+</ul>
+<h3 id="2-parnew收集器"><a class="markdownIt-Anchor" href="#2-parnew收集器"></a> 2. ParNew收集器</h3>
+<p>Serial收集器的多线程版本，也是新生代收集器</p>
+<ul>
+<li>可以与CMS垃圾回收一起使用</li>
+</ul>
+<h3 id="3-parallel-scavenge收集器"><a class="markdownIt-Anchor" href="#3-parallel-scavenge收集器"></a> 3. Parallel Scavenge收集器</h3>
+<p>是一个并行（无需暂停工作线程）的多线程新生代收集器，复制算法，目标是达到一个可控制的吞吐量。</p>
+<ul>
+<li>提供了一个参数<code>UseAdaptiveSizePolicy</code>，虚拟机会动态调整新生代大小，eden区和survival区的比例以提供最合适的停顿时间或者最大的吞吐量</li>
+<li>无法与CMS共同使用</li>
+</ul>
+<h3 id="serial-old收集器"><a class="markdownIt-Anchor" href="#serial-old收集器"></a> Serial Old收集器</h3>
+<p>Serial收集器的老年代版本，使用标记整理算法</p>
+<ul>
+<li>JDK 1.5之前，若新生代开启Parallel Scavenge，则老年代只能使用这种算法。</li>
+</ul>
+<h3 id="parallel-old-收集器"><a class="markdownIt-Anchor" href="#parallel-old-收集器"></a> Parallel Old 收集器</h3>
+<p>是 Parallel Scavenge 收集器的老年代版本，多线程并使用标记整理算法。</p>
+<h3 id="cms-收集器"><a class="markdownIt-Anchor" href="#cms-收集器"></a> CMS 收集器</h3>
+<p>以获取最短回收停帧时间为目标，使用标记清除算法，老年代收集器</p>
+<p>CMS回收期分为一下4个步骤</p>
+<ol>
+<li><strong>初始标记</strong>：标记GC root能够直接关联的对象，需要停帧</li>
+<li><strong>并发标记</strong>：进行GC root tracing，耗时最长</li>
+<li><strong>重新标记</strong>：为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短。此阶段也需要“Stop The World”。</li>
+<li><strong>并发清除</strong></li>
+</ol>
+<p>但是CMS也有缺点</p>
+<ul>
+<li>CPU资源敏感</li>
+<li>无法处理回收过程中又产生的新垃圾</li>
+<li>空间碎片</li>
+</ul>
+<h3 id="g1-收集器"><a class="markdownIt-Anchor" href="#g1-收集器"></a> G1 收集器</h3>
+<ul>
+<li>并行与并发，缩短停帧时间</li>
+<li>分代收集，但是可以独立管理一个堆</li>
+<li>不会产生空间碎片</li>
+<li>可以预测停帧时间</li>
+</ul>
+<p>G1收集器相比于其他收集器有着与众不同的特点</p>
+<ol>
+<li>横跨整个堆，把堆分划为大小相等的region，新生代老年代不再需要物理隔离，而是分布于不同的region（无需连续）</li>
+<li>建立可预测的时间模型，G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region。</li>
+<li>避免全堆扫描——Remembered Set。虚拟机为G1中每个Region维护了一个与之对应的Remembered Set。虚拟机发现程序在对Reference类型的数据进行写操作时，会产生一个Write Barrier暂时中断写操作，检查Reference引用的对象是否处于不同的Region之中（在分代的例子中就是检查是否老年代中的对象引用了新生代中的对象），如果是，便通过CardTable把相关引用信息记录到被引用对象所属的Region的Remembered Set之中。当进行内存回收时，在GC根节点的枚举范围中加入Remembered Set即可保证不对全堆扫描也不会有遗漏。</li>
+</ol>
+<h1 id="java-数据结构"><a class="markdownIt-Anchor" href="#java-数据结构"></a> Java 数据结构</h1>
+<h2 id="arraylist"><a class="markdownIt-Anchor" href="#arraylist"></a> ArrayList</h2>
+<p>如果ArrayList的大小已经不满足需求时，那么就将数组变为原长度的1.5倍，之后的操作就是把老的数组拷到新的数组里面</p>
+<p>线程不安全</p>
+<h2 id="linkedlist"><a class="markdownIt-Anchor" href="#linkedlist"></a> LinkedList</h2>
+<p>双向链表，搜索时会判断前半区间还是后半区间</p>
+<p>线程不安全</p>
+<h2 id="hashmap"><a class="markdownIt-Anchor" href="#hashmap"></a> HashMap</h2>
+<p>Java的HashMap为拉链式HashMap，使用数组存放元素，遇到哈希冲突则以链表的形式接在数组元素的后面。对于新插入的数据HashMap会对新数据的HashCode取模，结果则为index。但是计算机中取模的代价远高于位运算，因此HashMap要求数组长度必须为<code>2^n</code>，因为<code>HashCode &amp; 2^(n-1) = HashCode % 2^n</code></p>
+<p>当HashMap中的元素数量超过<code>Capacity * LoadFactor</code>时，则需要进行扩容，创建一个原来Capacity两倍的数组，把原本的元素全部重新移动到新数组中。多线程会造成冲突</p>
+<h2 id="concurrenthashmap"><a class="markdownIt-Anchor" href="#concurrenthashmap"></a> ConcurrentHashMap</h2>
+<h3 id="jdk-18-之前"><a class="markdownIt-Anchor" href="#jdk-18-之前"></a> JDK 1.8 之前</h3>
+<p>JDK1.8之前的concurrentHashMao是基于分段锁，将HashCode的前<code>sshift</code>位作为Segment的index，segment继承于ReentrantLock,读操作不使用锁，使用的是<code>UNSAFE.getObjectVolatile()</code>，而读操作则需要获取分段锁。</p>
+<h3 id="jdk-18-基于cas"><a class="markdownIt-Anchor" href="#jdk-18-基于cas"></a> JDK 1.8 基于CAS</h3>
+<p>CAS写入，失败synchronize</p>
+<h2 id="threadlocal"><a class="markdownIt-Anchor" href="#threadlocal"></a> ThreadLocal</h2>
+<p>ThreadLocal 是一个用来创建线程局部变量的类，只能被创建他的线程所使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建</span></span><br><span class="line">ThreadLocal&lt;T&gt; mVariableThreadLocal = <span class="keyword">new</span> ThreadLocal&lt;&gt;()</span><br><span class="line"><span class="comment">// set</span></span><br><span class="line">mVariableThreadLocal.set()<span class="comment">//value</span></span><br><span class="line"><span class="comment">// get</span></span><br><span class="line">mVariableThreadLocal.get()</span><br></pre></td></tr></table></figure>
+<p><strong>原理</strong></p>
+<p>首先想到的是每一个ThreadLocal都在内部维护一个<code>map</code>，<code>Key</code> 为Thread，<code>value</code>为在该Thread中的实例，但是这会造成一定的问题</p>
+<ul>
+<li>增加或减少线程需要修改<code>map</code>，因此该<code>map</code>需要线程安全，需要锁。</li>
+<li>线程结束需要保证该线程访问的所有ThreadLocal中对应的键值被删除，否则会导致内存泄露。</li>
+</ul>
+<p>因此，与其让ThreadLocal来维护这个map，我们不如让每个thread来维护自己的map，每个Thread都有一个threadLocalMap的字段，由thread维护ThreadLocal与具体对象的映射</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">        ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">        T result = (T)e.value;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于已经不再被使用且已经回收的ThreadLocal对象，ThreadLocal的Key为弱引用，GC的时候会被清除，但是value则是强引用，无法被回收。因此会把所有键是<code>null</code>的键值对的值也设置为null，用于防止内存泄漏。</p>
+<h2 id="红黑树b-树-b树"><a class="markdownIt-Anchor" href="#红黑树b-树-b树"></a> 红黑树，B 树， B+树</h2>
+<p><strong>B树（多路平衡查找树）</strong></p>
+<p><img src="/img/btree.png" alt="" /></p>
+<ul>
+<li>所有节点关键字递增排列，左小右大</li>
+<li>叶子节点树n, <code>1&lt;n&lt;=M (M&gt;=2)</code></li>
+<li>所有叶子节点都在同一层</li>
+</ul>
+<p><strong>B+树</strong></p>
+<p>是B树的升级版，速度接近于二分查找</p>
+<p><img src="/img/b+tree.png" alt="" /></p>
+<ul>
+<li>非叶子节点不保留值</li>
+<li>每一个叶子节点会保留下一个叶子节点的指针</li>
+</ul>
+<p>相比与B树</p>
+<ul>
+<li>树的层级更少，因为非叶子节点不存储值本身，可以储存更多条目</li>
+<li>查询速度更稳定。必须都要查询到叶子节点</li>
+<li>天然排序，全节点遍历更加快速，只需要沿着叶子节点构成的链表遍历即可</li>
+<li>但是若经常访问的节点层级较低，则B树更快</li>
+</ul>
+<p><strong>红黑树</strong></p>
+<p>保证O(logn)的时间复杂度</p>
+<h1 id="spring"><a class="markdownIt-Anchor" href="#spring"></a> Spring</h1>
+<h2 id="servlet"><a class="markdownIt-Anchor" href="#servlet"></a> Servlet</h2>
+<p>Servlet 本质上是知识Java中规定的一种接口，他包含5个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig var1)</span> <span class="keyword">throws</span> ServletException</span>;</span><br><span class="line">    <span class="function">ServletConfig <span class="title">getServletConfig</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest var1, ServletResponse var2)</span> <span class="keyword">throws</span> ServletException, IOException</span>;</span><br><span class="line">    <span class="function">String <span class="title">getServletInfo</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些方法包括了Servlet重要的生命周期函数 <code>init()</code> 和 <code>destroy</code>, 定义了这个Servlet在初始化和销毁时应该做出的行为，此外还有一个 <code>service()</code> 函数来定义收到请求时要做什么。</p>
+<p>单独的Servlet是无法独自工作的，因此我们需要<strong>Servlet容器</strong>，Tomcat就是我们所熟知的Servlet容器，当Tomcat接收到请求时，会决定将请求交由哪个Servlet来处理，并调用该Servlet的 <code>service()</code> 方法，生成 Response 后再返回请求方。</p>
+<h2 id="springmvc-请求流程"><a class="markdownIt-Anchor" href="#springmvc-请求流程"></a> SpringMVC 请求流程</h2>
+<ol>
+<li>用户向服务器发送请求</li>
+<li>获取Filter调用链，调用doFilter进行过滤</li>
+<li>请求被Spring 前端控制DispatcherServlet捕获；</li>
+<li>DispatcherServlet对请求URL进行解析，得到请求资源标识符（URI）。然后根据该URI，调用HandlerMapping获得该Handler配置的所有相关的对象（包括Handler对象以及Handler对象对应的拦截器），最后以HandlerExecutionChain对象的形式返回；</li>
+<li>DispatcherServlet 根据获得的Handler，选择一个合适的HandlerAdapter。（附注：如果成功获得HandlerAdapter后，此时将开始执行拦截器的preHandler(…)方法）</li>
+<li>提取Request中的模型数据，填充Handler入参，开始执行Handler（Controller)。 在填充Handler的入参过程中，根据你的配置，Spring将帮你做一些额外的工作：<br />
+HttpMessageConveter： 将请求消息（如Json、xml等数据）转换成一个对象，将对象转换为指定的响应信息数据转换：对请求消息进行数据转换。如String转换成Integer、Double等数据根式化：对请求消息进行数据格式化。 如将字符串转换成格式化数字或格式化日期等数据验证： 验证数据的有效性（长度、格式等），验证结果存储到BindingResult或Error中.</li>
+<li>Handler执行完成后，向DispatcherServlet 返回一个ModelAndView对象；</li>
+<li>根据返回的ModelAndView，选择一个适合的ViewResolver（必须是已经注册到Spring容器中的ViewResolver)返回给DispatcherServlet ；</li>
+<li>ViewResolver 结合Model和View，来渲染视图</li>
+<li>将渲染结果返回给客户端。</li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/" title="Java面试速查" target="_blank" rel="external">https://virgilchen97.github.io/2020/04/Java面试速查/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/04/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" title="数据库知识点整理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/03/1111-%E6%9C%89%E6%95%88%E6%8B%AC%E5%8F%B7%E7%9A%84%E5%B5%8C%E5%A5%97%E6%B7%B1%E5%BA%A6/" title="1111.有效括号的嵌套深度"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn " data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">    <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/04/Java%E9%9D%A2%E8%AF%95%E9%80%9F%E6%9F%A5/';
+        
+        this.page.identifier = 'Java面试速查';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

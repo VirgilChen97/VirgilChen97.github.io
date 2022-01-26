@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>SpringBoot 配置文件 | Virgil Chen 的技术博客</title>
+  <meta name="description" content="1. yaml 语法 基本语法：  使用缩进表示层级关系 缩进使用空格 大小写敏感  123server:    port: 8080    address: www.example.com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot 配置文件">
+<meta property="og:url" content="https://virgilchen97.github.io/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Virgil Chen 的技术博客">
+<meta property="og:description" content="1. yaml 语法 基本语法：  使用缩进表示层级关系 缩进使用空格 大小写敏感  123server:    port: 8080    address: www.example.com">
+<meta property="og:locale">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-12)SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.md/2020-06-12-18-09-24.png">
+<meta property="og:image" content="https://virgilchen97.github.io/img/(2020-06-12)SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.md/2020-06-12-21-32-51.png">
+<meta property="article:published_time" content="2020-06-12T09:49:12.000Z">
+<meta property="article:modified_time" content="2022-01-26T13:48:43.537Z">
+<meta property="article:author" content="Virgil Chen">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://virgilchen97.github.io/img/(2020-06-12)SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.md/2020-06-12-18-09-24.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://virgilchen97.github.io/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Virgil Chen 的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/VirgilChen97" target="_blank">
+          <img class="img-circle img-rotate" src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Virgil Chen</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">后端研发工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shanghai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">课程笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/DFS/" style="font-size: 13px;">DFS</a> <a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Multi-core-Concurrent-Programming/" style="font-size: 13.4px;">Multi-core Concurrent Programming</a> <a href="/tags/Netty/" style="font-size: 13.4px;">Netty</a> <a href="/tags/React/" style="font-size: 13px;">React</a> <a href="/tags/Shell/" style="font-size: 13.4px;">Shell</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" style="font-size: 13.6px;">二分查找</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" style="font-size: 13px;">二叉搜索树</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 13.6px;">二叉树</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" style="font-size: 13.2px;">二进制</a> <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" style="font-size: 13px;">优先队列</a> <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 13.8px;">位运算</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 13px;">剪枝</a> <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">单链表</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 13px;">双指针</a> <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 13px;">实用工具类</a> <a href="/tags/%E6%89%BE%E8%A7%84%E5%BE%8B/" style="font-size: 13.2px;">找规律</a> <a href="/tags/%E6%8C%87%E9%92%88/" style="font-size: 13px;">指针</a> <a href="/tags/%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" style="font-size: 13px;">排列组合</a> <a href="/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 13.2px;">排序</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E9%A2%98/" style="font-size: 13px;">数学题</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13px;">数据库</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 13px;">数组</a> <a href="/tags/%E6%9C%80%E5%B0%8F%E5%A0%86/" style="font-size: 13px;">最小堆</a> <a href="/tags/%E6%A0%88/" style="font-size: 13px;">栈</a> <a href="/tags/%E6%B6%A8%E7%9F%A5%E8%AF%86%E4%BA%86/" style="font-size: 13px;">涨知识了</a> <a href="/tags/%E6%BC%8F%E6%B4%9E/" style="font-size: 13px;">漏洞</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" style="font-size: 13px;">线程同步</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 13px;">设计模式</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 13px;">递归</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">14</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-26-13-48-27-Netty-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" class="title">Netty 基本组件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-26T05:48:27.000Z" itemprop="datePublished">2022-01-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-07-08-54-19-Netty-Hello-world/" class="title">Netty Hello world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-07T00:54:19.000Z" itemprop="datePublished">2022-01-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-06-14-41-45-Netty-%E7%AE%80%E4%BB%8B/" class="title">Netty 简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-06T06:41:45.000Z" itemprop="datePublished">2022-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/2022-01-04-08-40-07-Jackson%E5%92%8C%E5%86%85%E9%83%A8%E7%B1%BB/" class="title">Jackson和内部类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-04T00:40:07.000Z" itemprop="datePublished">2022-01-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/">技术学习</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/12/2021-12-16-14-24-08-Log4j2-RCE-0day%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="title">Log4j2 RCE 0day漏洞学习</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-12-16T06:24:08.000Z" itemprop="datePublished">2021-12-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-SpringBoot-配置文件" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot 配置文件
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="article-date">
+	  <time datetime="2020-06-12T09:49:12.000Z" itemprop="datePublished">2020-06-12</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%89%BE%E5%B7%A5%E4%BD%9C/">找工作</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring/" rel="tag">Spring</a>, <a class="article-tag-link-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="1-yaml-语法"><a class="markdownIt-Anchor" href="#1-yaml-语法"></a> 1. yaml 语法</h1>
+<p><strong>基本语法</strong>：</p>
+<ul>
+<li>使用缩进表示层级关系</li>
+<li>缩进使用空格</li>
+<li>大小写敏感</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line">    <span class="attr">address:</span> <span class="string">www.example.com</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>支持的数据结构</strong></p>
+<ol>
+<li>
+<p>字面量</p>
+<p>字符串无需添加双引号</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">address:</span> <span class="string">www.example.com</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>对象和Map</p>
+<p>多行写法</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">people:</span> </span><br><span class="line">    <span class="attr">name:</span> <span class="string">Frank</span></span><br><span class="line">    <span class="attr">age:</span> <span class="number">18</span></span><br><span class="line">    <span class="attr">gender:</span> <span class="string">male</span></span><br></pre></td></tr></table></figure>
+<p>行内写法<br />
+多行写法</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">people:</span> &#123;<span class="attr">name:</span> <span class="string">Frank</span>, <span class="attr">age:</span> <span class="number">18</span>, <span class="attr">gender:</span> <span class="string">male</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>数组</p>
+<p>多行写法</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">animals:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">cat</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">dog</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">pig</span></span><br></pre></td></tr></table></figure>
+<p>行内写法<br />
+多行写法</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">people:</span> &#123;<span class="string">cat</span>, <span class="string">dog</span>, <span class="string">pig</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="2-获取配置文件的值-configurationproperties"><a class="markdownIt-Anchor" href="#2-获取配置文件的值-configurationproperties"></a> 2. 获取配置文件的值 （@ConfigurationProperties）</h1>
+<p>首先我们在 <code>com.cyf.demo.bean</code> 包下创建一个新的 <code>Hero</code> 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 省略了 getter, setter和toString</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 测试字面量的获取</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> atk;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> def;</span><br><span class="line">    <span class="keyword">private</span> Boolean isAlive;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试Map的获取</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Integer&gt; abilities;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试数组的获取</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; equipments;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 测试对象的获取</span></span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的我们创建 <code>Hero</code> 类包含的 <code>Weapon</code> 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 省略了 getter, setter和toString</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Weapon</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> atk;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> def;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时我们在 <code>src/main/resources</code> 文件夹下创建 <code>application.yml</code>，并添加以下内容, 可以发现与我们定义的 <code>Hero</code> 类的属性完全一致：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Hero:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">Ashe</span></span><br><span class="line">  <span class="attr">atk:</span> <span class="number">20</span></span><br><span class="line">  <span class="attr">def:</span> <span class="number">20</span></span><br><span class="line">  <span class="attr">isAlive:</span> <span class="string">ture</span></span><br><span class="line">  <span class="attr">abilities:</span></span><br><span class="line">    <span class="attr">bomb:</span> <span class="number">20</span></span><br><span class="line">    <span class="attr">shotgun:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">weapon:</span></span><br><span class="line">    <span class="attr">atk:</span> <span class="number">20</span></span><br><span class="line">    <span class="attr">def:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>然后我们为 <code>Hero</code> 类添加 <code>@ConfigurationProperties</code> 注解。它可以讲配置文件中的属性值和类中对应的属性值联系起来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">// 启用配置文件功能，类本身必须是一个Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;Hero&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时我们得到了一条提示：</p>
+<p><img src="/img/(2020-06-12)SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.md/2020-06-12-18-09-24.png" alt="" /></p>
+<p>这是因为我们并没有在 Maven 中添加 SpringBoot 的注解处理器，根据官方文档，我们在 <code>pom.xml</code> 中添加：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后重新运行一遍我们的 <code>DemoApplication</code>, Annotation Processor 就会正常工作了, 编写配置文件的时候Idea也会进行提示。</p>
+<p>接下来我们修改 <code>src/test/java/com/cyf/demo/DemoApplicationTests.java</code>, 编写一个单元测试来测试我们配置文件的值是否注入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoApplicationTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 自动注入Hero类</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    Hero hero;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(hero);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行测试，我们发现输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hero&#123;name=&#x27;Ashe&#x27;, atk=20, def=20, isAlive=null, abilities=&#123;bomb=20, shotgun=10&#125;, equipments=null, weapon=Weapon&#123;atk=20, def=0&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说Spring成功的获取了我们配置文件中的值并注入到了对应的类中。</p>
+<h1 id="3-获取配置文件的值-value"><a class="markdownIt-Anchor" href="#3-获取配置文件的值-value"></a> 3. 获取配置文件的值 （@Value）</h1>
+<p>使用 <code>@Value</code> 注解和在之前的 Spring 中配置文件的 <code>&lt;bean&gt;</code> 便签中进行配置基本相同，原来我们会这样配置一个bean：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;Hero&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;()&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在value处Spring支持三种类型：</p>
+<ol>
+<li>字面量</li>
+<li><code>$&#123;key&#125;</code> 从配置文件中获取key对应的value</li>
+<li><code>#&#123;SpEL&#125;</code> 运算</li>
+</ol>
+<p>因此 <code>@Value</code> 注解同样支持这三种类型。作为测试，我们修改Hero类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 省略了 getter, setter和toString</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="comment">//@ConfigurationProperties(prefix = &quot;hero&quot;) 不再使用 ConfigurationProperties</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;hero.name&#125;&quot;)</span> <span class="comment">// 通过key获取value</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="meta">@Value(&quot;#&#123;10*2&#125;&quot;)</span> <span class="comment">// 计算</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> atk;</span><br><span class="line">    <span class="meta">@Value(&quot;20&quot;)</span> <span class="comment">// 字面量</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> def;</span><br><span class="line">    <span class="keyword">private</span> Boolean isAlive;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Integer&gt; abilities;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; equipments;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重新运行单元测试，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hero&#123;name=&#x27;Ashe&#x27;, atk=20, def=20, isAlive=null, abilities=null, equipments=null, weapon=null&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现我们注解了的三个值都成功的注入到了对象中。</p>
+<h1 id="4-value-和-configurationproperties-的区别"><a class="markdownIt-Anchor" href="#4-value-和-configurationproperties-的区别"></a> 4. @Value 和 @ConfigurationProperties 的区别</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>@Value</code></th>
+<th><code>@ConfigurationProperties</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>功能</td>
+<td>批量注入配置文件属性</td>
+<td>单个属性注入</td>
+</tr>
+<tr>
+<td>松散绑定*</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>SpEL</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>复杂类型</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+</tbody>
+</table>
+<p>*松散绑定指的是 <code>lastName</code> = <code>last-name</code></p>
+<h1 id="5-propertysource-和-importresource"><a class="markdownIt-Anchor" href="#5-propertysource-和-importresource"></a> 5. @PropertySource 和 @ImportResource</h1>
+<p>如果所有配置都写在 <code>application.properties</code> 里，会显得配置文件过于复杂或者庞大。此时我们可以使用 <code>@PropertySource</code> 来指定要读取的配置文件。刚才我们把所有的 <code>Person</code> 类的属性写在了 <code>application.yml</code> 里。现在我们可以把内容改成 <code>properties</code> 的格式，然后放入 <code>person.properties</code> 文件中：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">hero.name</span>=<span class="string">Ashe</span></span><br><span class="line"><span class="meta">hero.atk</span>=<span class="string">20</span></span><br><span class="line"><span class="meta">hero.def</span>=<span class="string">20</span></span><br><span class="line"><span class="meta">hero.isAlive</span>=<span class="string">ture</span></span><br><span class="line"><span class="meta">hero.abilities.bomb</span>=<span class="string">20</span></span><br><span class="line"><span class="meta">hero.abilities.shotgun</span>=<span class="string">10</span></span><br><span class="line"><span class="meta">hero.weapon.atk</span>=<span class="string">20</span></span><br><span class="line"><span class="meta">hero.weapon.def</span>=<span class="string">0</span></span><br></pre></td></tr></table></figure>
+<p>然后再 <code>Hero</code> 类前方添加如下注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PropertySource(&quot;classpath:person.properties&quot;)</span> <span class="comment">// 使用 person.properties 作为本类的配置文件</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;Hero&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置一样可以成功注入类中。</p>
+<p>而 <code>@ImportResource</code> 则是用来加载自定义配置文件用的，如果我们在 <code>resource</code> 目录下添加一个 <code>beans.xml</code> 文件，SpringBoot 不会自动导入这个配置文件，我们需要在 <code>DemoApplications</code> 中加入注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ImportResource(locations=&#123;&quot;classpath:bean.xml&quot;&#125;)</span></span><br></pre></td></tr></table></figure>
+<p>SpringBoot 才会识别这个配置文件。但是SpringBoot并不推荐我们这样添加新的组件，推荐使用<strong>全注解</strong>的方式来添加组件。</p>
+<p>首先在我们的 <code>com.cyf.demo</code> 包下创建一个新的 <code>service</code> 包。然后编写一个 <code>HelloService</code> 类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cyf.demo.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This is a hello from hello service&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当我们尝试在单元测试中注入 <code>HelloService</code> 时， 会发选 Idea 已经提示我们无法找到这个bean：</p>
+<p><img src="/img/(2020-06-12)SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.md/2020-06-12-21-32-51.png" alt="" /></p>
+<p>通常我们会编写一个配置文件来导入这个包，但是现在我们通过配置类的方式。在我们的 <code>com.cyf.demo</code> 包下创建一个新的 <code>config</code> 包，新建 <code>HelloConfig</code> 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span> <span class="comment">// 表明这是一个配置类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloConfig</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span> <span class="comment">// 等同于原本的&lt;bean&gt; 标签，方法名就是原本的bean id</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> HelloService <span class="title">helloService</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HelloService();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时我们再运行单元测试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This is a hello from hello service</span><br></pre></td></tr></table></figure>
+<p>这个组件就通过我们的配置类加载进来了。</p>
+<h1 id="6-配置文件占位符"><a class="markdownIt-Anchor" href="#6-配置文件占位符"></a> 6. 配置文件占位符</h1>
+<p>共有两种，一种是随机数占位符，还有一种时属性配置占位符。我们分别举例。</p>
+<p>之前我们的 <code>application.yml</code> 中指定了 <code>Hero</code> 类型的一些属性，现在我们可以向其中添加一些占位符：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hero:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">Ashe$&#123;random.uuid&#125;</span> <span class="comment"># 生成随机UUID</span></span><br><span class="line">  <span class="attr">atk:</span> <span class="string">$&#123;random.int&#125;</span> <span class="comment"># 生成随机整数</span></span><br><span class="line">  <span class="attr">def:</span> <span class="number">20</span></span><br><span class="line">  <span class="attr">isAlive:</span> <span class="string">ture</span></span><br><span class="line">  <span class="attr">abilities:</span></span><br><span class="line">    <span class="attr">bomb:</span> <span class="number">20</span></span><br><span class="line">    <span class="attr">shotgun:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">weapon:</span></span><br><span class="line">    <span class="attr">atk:</span> <span class="string">$&#123;hero.atk&#125;</span> <span class="comment"># 使用存在的属性配置</span></span><br><span class="line">    <span class="attr">def:</span> <span class="string">$&#123;hero.at:10&#125;</span> <span class="comment"># 若属性不存在则可以使用冒号指定默认值</span></span><br></pre></td></tr></table></figure>
+<p>此时我们再次运行单元测试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hero&#123;name=&#x27;Ashe8a1189c9-2740-4b6e-b85b-14de42bdfb42&#x27;, atk=-156092609, def=20, isAlive=null, abilities=&#123;bomb=20, shotgun=10&#125;, equipments=null, weapon=Weapon&#123;atk=-499134195, def=0&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>可以观察到生成的UUID，随机整数的ATK，以及和ATK相同的Waepon ATK。由于 <code>hero.at</code> 这个属性不存在，<code>weapon.def</code> 被设置成了默认值10。</p>
+<h1 id="7-profile"><a class="markdownIt-Anchor" href="#7-profile"></a> 7. Profile</h1>
+<p>在实际开发过程中经常牵涉到不同环境的切换（生产/开发/测试）。共有两种方法可以实现多profile。</p>
+<p>当使用properties文件时，我们可以使用 <code>application-&#123;profile name&#125;.properties</code> 来实现多profile配置，例如 <code>application-dev.properties</code> 代表开发环境。</p>
+<p>当使用yaml文件时，我们可以使用yaml的文档块来实现多profile，例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span> </span><br><span class="line">    <span class="attr">port:</span> <span class="number">8081</span></span><br><span class="line"><span class="attr">spring:</span> </span><br><span class="line">    <span class="attr">profiles:</span> <span class="string">dev</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="attr">server:</span> </span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">spring:</span> </span><br><span class="line">    <span class="attr">profiles:</span> <span class="string">prod</span></span><br></pre></td></tr></table></figure>
+<p>在启动项目时，加上 <code>-spring.profiles.active=&#123;profile name&#125;</code> 即可在profile之间切换。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://virgilchen97.github.io/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" title="SpringBoot 配置文件" target="_blank" rel="external">https://virgilchen97.github.io/2020/06/SpringBoot-配置文件/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/VirgilChen97" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://raw.githubusercontent.com/VirgilChen97/image-host/master/images/26373319.7gdso7fpgms0.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/VirgilChen97" target="_blank"><span class="text-dark">Virgil Chen</span><small class="ml-1x">后端研发工程师</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/06/SpringBoot-%E6%97%A5%E5%BF%97/" title="SpringBoot 日志"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/06/SpringBoot-%E5%85%A5%E9%97%A8/" title="SpringBoot 入门"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://virgilchen97.github.io/2020/06/SpringBoot-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/';
+        
+        this.page.identifier = 'SpringBoot-配置文件';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'virgilchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
